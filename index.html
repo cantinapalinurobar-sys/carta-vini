@@ -772,6 +772,130 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;color:inhe
   .modal-nome{ font-size:26px; }
   .modal-p-val{ font-size:23px; }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   RIGA VINO — redesign (mobile-first, lettura serale)
+   Sovrascrive il blocco "legacy compat": le classi emesse da
+   carta.js sono .vino-* , non .w-*
+   ══════════════════════════════════════════════════════════════ */
+
+/* Titolo sezione: resta agganciato mentre si scorre */
+.sezione{margin-bottom:26px}
+.sezione-titolo{
+  position:sticky; top:0; z-index:5;
+  background:linear-gradient(#0a0608 78%, rgba(10,6,8,0));
+  padding:14px 16px 11px;
+  border-bottom:1px solid rgba(232,0,26,.18);
+}
+
+.vino{
+  display:flex; align-items:flex-start;
+  gap:16px;
+  padding:15px 16px 16px;
+  min-height:76px;
+  border-bottom:1px solid rgba(244,236,233,.055);
+  -webkit-tap-highlight-color:transparent;
+}
+.vino:first-child{border-top:none}
+.vino:last-child{border-bottom:none}
+.vino:active{background:rgba(232,0,26,.07)}
+@media(hover:hover){ .vino:hover{background:rgba(232,0,26,.045)} }
+
+.vino-sx{flex:1 1 auto; min-width:0}
+.vino-dx{
+  flex:0 0 auto; text-align:right;
+  display:flex; flex-direction:column; align-items:flex-end; gap:3px;
+  padding-top:2px;
+}
+
+/* 1 · Nome + annata + formato */
+.vino-nome{
+  font-family:var(--font-serif,"Cormorant Garamond",Georgia,serif);
+  font-size:19px; font-weight:500; line-height:1.22;
+  color:#f2e9e6;
+  display:flex; flex-wrap:wrap; align-items:baseline; gap:0 9px;
+  letter-spacing:.005em;
+}
+.vino-annata{
+  font-family:var(--font-sans,Montserrat,system-ui,sans-serif);
+  font-size:11px; font-weight:400; letter-spacing:.08em;
+  color:rgba(242,233,230,.42);
+  font-variant-numeric:tabular-nums;
+  position:relative; top:-1px;
+}
+.vino-formato-badge{
+  font-family:var(--font-sans,Montserrat,system-ui,sans-serif);
+  font-size:8.5px; font-weight:500; letter-spacing:.1em; text-transform:uppercase;
+  color:#ff5c6e;
+  border:1px solid rgba(232,0,26,.45);
+  border-radius:2px; padding:2px 5px 1px;
+  position:relative; top:-2px;
+}
+
+/* 2 · Produttore — la riga che il cliente cerca davvero */
+.vino-prod{
+  font-family:var(--font-sans,Montserrat,system-ui,sans-serif);
+  font-size:10.5px; font-weight:500;
+  letter-spacing:.15em; text-transform:uppercase;
+  color:rgba(242,233,230,.66);
+  margin-top:6px; line-height:1.4;
+}
+
+/* 3 · Vitigno */
+.vino-vitigno{
+  font-family:var(--font-serif,"Cormorant Garamond",Georgia,serif);
+  font-style:italic; font-size:14px; line-height:1.35;
+  color:rgba(242,233,230,.46);
+  margin-top:3px;
+}
+
+/* 4 · Geografia */
+.vino-geo{
+  font-family:var(--font-sans,Montserrat,system-ui,sans-serif);
+  font-size:9px; font-weight:400;
+  letter-spacing:.13em; text-transform:uppercase;
+  color:rgba(242,233,230,.3);
+  margin-top:7px; line-height:1.5;
+}
+.vino-geo-sep{margin:0 6px; color:rgba(232,0,26,.5)}
+.vino-paese-tag{color:rgba(255,92,110,.6)}
+
+/* 5 · Prezzo */
+.vino-prezzo{
+  font-family:var(--font-serif,"Cormorant Garamond",Georgia,serif);
+  font-size:21px; font-weight:500; line-height:1;
+  color:#f2e9e6;
+  white-space:nowrap; font-variant-numeric:tabular-nums;
+}
+.vino-bicchiere{
+  font-family:var(--font-sans,Montserrat,system-ui,sans-serif);
+  font-size:8.5px; font-weight:500;
+  letter-spacing:.12em; text-transform:uppercase;
+  color:#ff5c6e;
+  white-space:nowrap;
+  border-top:1px solid rgba(232,0,26,.28);
+  padding-top:4px; margin-top:2px;
+}
+
+/* Schermi larghi: più aria, testo più grande */
+@media(min-width:1024px){
+  .vino{padding:20px 22px; gap:32px; min-height:0}
+  .vino-nome{font-size:23px}
+  .vino-annata{font-size:12px}
+  .vino-prod{font-size:11px; margin-top:8px}
+  .vino-vitigno{font-size:16px}
+  .vino-geo{font-size:9.5px; margin-top:9px}
+  .vino-prezzo{font-size:25px}
+  .sezione-titolo{font-size:11px; padding:16px 22px 12px}
+  .sezione{margin-bottom:36px}
+}
+
+/* Schermi piccoli */
+@media(max-width:380px){
+  .vino{padding:14px 13px 15px; gap:11px}
+  .vino-nome{font-size:17.5px}
+  .vino-prezzo{font-size:19px}
+}
 </style>
 </head>
 <body>
