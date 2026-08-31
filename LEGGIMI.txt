@@ -1,0 +1,21 @@
+PALINUROBAR — CARTA DEI VINI
+
+  index.html              la pagina
+  carta.js                sostituisce quello attuale nel repo
+  manifest.webmanifest    icona per "aggiungi alla schermata Home"
+  assets/                 11 file: foto, logo, font, audio, icone
+
+IMPORTANTE
+Carica SEMPRE index.html insieme alla cartella assets. Se aggiorni solo
+l'HTML e non gli asset, o viceversa, qualcosa puo' smettere di funzionare
+solo su alcuni dispositivi.
+
+COME CARICARE
+1. Doppio click su index.html e controlla che si veda tutto.
+2. GitHub -> Add file -> Upload files.
+3. Trascina index.html, carta.js, manifest.webmanifest E la cartella
+   assets INTERA (l'icona della cartella, non i file che contiene).
+4. Scrivi una frase nel commit e premi Commit changes.
+
+Nel repo devi vedere la CARTELLA "assets", non i file sparsi nella lista.
+I nomi dei file sono case-sensitive online: non rinominarli.
