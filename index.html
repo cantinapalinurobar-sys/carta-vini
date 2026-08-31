@@ -956,7 +956,8 @@ body i,body em,.w-vitigno,.w-prod,.w-geo,.vino-prod,.vino-vitigno,.vino-regione,
   left:-42%;right:-42%;top:-38%;bottom:-38%;z-index:0;pointer-events:none;
   opacity:0;
   background:radial-gradient(closest-side,
-    rgba(196,13,34,.3) 0%,rgba(150,0,22,.16) 42%,rgba(70,0,11,.07) 68%,transparent 82%);
+    rgba(226,20,42,.42) 0%,rgba(178,0,26,.24) 34%,rgba(110,0,17,.12) 58%,
+    rgba(60,0,10,.05) 74%,transparent 86%);
   animation:pbIgnite 1.9s steps(1,end) .5s both}
 .pb-neon.replay::before{animation:pbIgnite 1.9s steps(1,end) 0s both}
 .pb-neon.dark::before{animation:none;opacity:0}
@@ -966,24 +967,33 @@ body i,body em,.w-vitigno,.w-prod,.w-geo,.vino-prod,.vino-vitigno,.vino-regione,
   position:relative;z-index:1;
   display:block;width:100%;aspect-ratio:600/599;
   -webkit-mask:var(--m);mask:var(--m);
-  background:linear-gradient(178deg,#ff3d46 0%,#e0122a 52%,#bd0320 100%);
+  background:linear-gradient(178deg,#ff1f2e 0%,#e2081f 50%,#c0021e 100%);
   opacity:0;
   filter:
-    drop-shadow(0 0 1px rgba(255,238,234,.95))
-    drop-shadow(0 0 4px #ff5560)
-    drop-shadow(0 0 11px #d4102a)
-    drop-shadow(0 0 26px rgba(168,0,22,.7))
-    drop-shadow(0 0 58px rgba(110,0,17,.45))
-    drop-shadow(0 0 104px rgba(70,0,11,.3));
+    drop-shadow(0 0 2px rgba(255,190,185,.85))
+    drop-shadow(0 0 7px #ff2a38)
+    drop-shadow(0 0 18px #d20a24)
+    drop-shadow(0 0 42px rgba(180,0,25,.62))
+    drop-shadow(0 0 82px rgba(120,0,18,.42))
+    drop-shadow(0 0 150px rgba(80,0,12,.26));
   animation:pbIgnite 1.9s steps(1,end) .5s both,
             pbHum 7s ease-in-out 2.4s infinite;
 }
-/* filamento incandescente dentro il vetro: stessa maschera, sfocato e chiaro.
-   La sfocatura viene ritagliata dalla maschera, quindi smorza i bordi e
-   lascia il centro del tubo quasi bianco — e' il cuore del gas. */
-.pb-neon .tube::after{content:"";position:absolute;inset:0;
-  -webkit-mask:var(--m);mask:var(--m);
-  background:#ffdcd4;opacity:.62;filter:blur(1.6px);pointer-events:none}
+/* FILAMENTO — la parte che regge tutto l'effetto.
+   Sfocare un fondo uniforme non sfuma niente: un campo costante resta
+   costante. Va sfocata la SILHOUETTE, che ha bordi propri. Qui il PNG del
+   logo (bianco su trasparente) e' usato come background-image e sfocato:
+   diventa una forma bianca dai contorni morbidi. La maschera netta di .tube
+   la ritaglia, quindi al centro del tratto resta bianco pieno e verso il
+   bordo la sfumatura si spegne lasciando vedere il rosso sotto.
+   E' il gradiente vetro→gas, ed e' il motivo per cui un neon vero ha il
+   cuore bianco e il colore solo nell'alone. */
+.pb-neon .tube i{position:absolute;inset:0;pointer-events:none;
+  background:var(--m);}
+/* alone interno largo: illumina tutto il tratto */
+.pb-neon .tube .core{filter:blur(9px);opacity:.8}
+/* nucleo stretto: la riga incandescente al centro del tubo */
+.pb-neon .tube .hot{filter:blur(3px);opacity:.75}
 
 /* rigiocata dall'interruttore, senza attesa */
 .pb-neon.replay .tube{
@@ -1088,12 +1098,13 @@ body.view-landing .filter-fab,body.view-landing .pb-back{display:none!important}
   /* Due sole ombre: su mobile ogni ridisegno del filtro costa, e con sei
      livelli il compositore non sta dietro ai passaggi da 20 ms del flicker. */
   .pb-neon .tube{filter:
-    drop-shadow(0 0 1px rgba(255,238,234,.95))
-    drop-shadow(0 0 4px #ff5560)
-    drop-shadow(0 0 10px #d4102a)
-    drop-shadow(0 0 22px rgba(168,0,22,.65))
-    drop-shadow(0 0 46px rgba(100,0,16,.4))}
-  .pb-neon .tube::after{filter:blur(1.1px);opacity:.6}
+    drop-shadow(0 0 2px #ff6b70)
+    drop-shadow(0 0 8px #e00a22)
+    drop-shadow(0 0 20px rgba(190,0,26,.7))
+    drop-shadow(0 0 46px rgba(110,0,17,.45))}
+  /* il logo e' circa la meta': le sfocature scalano con lui */
+  .pb-neon .tube .core{filter:blur(5px);opacity:.78}
+  .pb-neon .tube .hot{filter:blur(1.7px);opacity:.72}
   .pb-neon::before{left:-26%;right:-26%;top:-24%;bottom:-24%}
   .pb-gallery{display:none}
   .pb-landing{background:#0a0607}
@@ -1509,7 +1520,7 @@ body.view-calice .lista-table tbody td:nth-child(4){display:none!important}
    <div class="pb-core">
     <div class="pb-neon-row">
       <div class="pb-neon" id="pb-neon" role="img" aria-label="Palinurobar">
-        <span class="tube"></span>
+        <span class="tube"><i class="core"></i><i class="hot"></i></span>
       </div>
       <button class="pb-sound" id="pb-sound" type="button" onclick="pbToggle(event)"
               role="switch" aria-checked="false" aria-label="Accendi o spegni l'insegna">
