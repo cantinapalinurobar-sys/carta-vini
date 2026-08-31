@@ -945,6 +945,13 @@ body i,body em,.w-vitigno,.w-prod,.w-geo,.vino-prod,.vino-vitigno,.vino-regione,
 .pb-neon .off{position:absolute;inset:0;z-index:1;will-change:opacity;filter:brightness(.15) sepia(1) hue-rotate(-30deg) saturate(2.4)}
 .pb-neon.lit .tube{opacity:1;animation:pbHum 7s ease-in-out infinite}
 .pb-neon.lit .off{opacity:0}
+/* fallback se il PNG del logo non carica: testo al neon al suo posto */
+.pb-neon.pb-noimg::after{content:"Palinurobar";position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;text-align:center;
+  font-family:var(--font-display);font-weight:700;font-size:clamp(20px,7vw,44px);
+  letter-spacing:-.02em;color:#fff;
+  text-shadow:0 0 4px #fff,0 0 12px var(--neon-hot),0 0 30px var(--neon)}
+.pb-neon.pb-noimg img{visibility:hidden}
 @keyframes pbHum{0%,100%{opacity:1}31%{opacity:.95}32.4%{opacity:1}67%{opacity:.92}68.6%{opacity:1}}
 
 /* ── REVEAL lento ───────────────────────────────────────────────────────── */
@@ -1398,8 +1405,8 @@ body.view-cantina .sidebar-filters{max-height:100vh;opacity:1;pointer-events:aut
   <div class="pb-panel">
    <div class="pb-core">
     <div class="pb-neon" id="pb-neon">
-      <img class="off" src="assets/logo-neon-320.png" srcset="assets/logo-neon-320.png 320w, assets/logo-neon.png 600w" sizes="(max-width:1023px) 240px, 420px" alt="" width="600" height="599" decoding="async">
-      <img class="tube" src="assets/logo-neon-320.png" srcset="assets/logo-neon-320.png 320w, assets/logo-neon.png 600w" sizes="(max-width:1023px) 240px, 420px" alt="Palinurobar" width="600" height="599" decoding="async">
+      <img class="off" src="assets/logo-neon.png" alt="" width="600" height="599" decoding="async">
+      <img class="tube" src="assets/logo-neon.png" alt="Palinurobar" width="600" height="599" decoding="async">
     </div>
     <div class="pb-tagline pb-rv d2">Your Favourite Whistling Bar</div>
 
@@ -1642,6 +1649,12 @@ body.view-cantina .sidebar-filters{max-height:100vh;opacity:1;pointer-events:aut
   function clearSeq(){ _seqT.forEach(clearTimeout); _seqT = []; }
   function flicker(){
     if(!neon) return;
+    /* se il logo non e' arrivato, si accende comunque un fallback leggibile */
+    var _img = neon.querySelector(".tube");
+    if(_img && _img.complete && _img.naturalWidth === 0){
+      neon.classList.add("lit","pb-noimg");
+      return;
+    }
     var tube = neon.querySelector(".tube"), off = neon.querySelector(".off");
     if(!tube) return;
     clearSeq(); clearTimeout(_t2);
