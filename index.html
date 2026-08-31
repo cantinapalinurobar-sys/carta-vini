@@ -1237,6 +1237,81 @@ body.view-cantina .sidebar-filters{max-height:100vh;opacity:1;pointer-events:aut
   -webkit-overflow-scrolling:touch;scrollbar-width:none}
   .pb-price-chips::-webkit-scrollbar{display:none}}
 
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   RIGA VINO — classi realmente emesse da carta.js (_buildWineRow)
+   Il foglio base le dichiarava in una regola VUOTA: erano senza stile.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.vino{
+  display:flex;justify-content:space-between;align-items:baseline;gap:18px;
+  padding:15px 16px 15px 18px;position:relative;
+  border-bottom:1px solid rgba(168,0,22,.09);cursor:pointer;
+  transition:background .25s ease}
+.vino::before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:2px;
+  background:var(--accent,rgba(168,0,22,.35));opacity:.55;transition:opacity .3s}
+.vino:hover::before{opacity:1}
+.vino-sx{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.vino-dx{flex-shrink:0;text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:2px}
+
+/* nome del vino — Venezia Bold */
+.vino-nome{
+  font-family:var(--font-display);font-weight:700;font-size:17px;letter-spacing:-.012em;
+  color:rgba(255,255,255,.95);line-height:1.25;
+  display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.vino-annata{
+  font-family:var(--font-sans);font-size:11.5px;font-weight:400;letter-spacing:0;
+  color:rgba(255,255,255,.5);font-variant-numeric:tabular-nums}
+.vino-formato-badge{
+  font-family:var(--font-sans);font-size:9px;font-weight:600;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--neon-hot);
+  border:1px solid rgba(209,16,31,.45);border-radius:999px;padding:1px 7px;line-height:1.5}
+
+/* produttore e vitigno — corsivo editoriale */
+.vino-prod{
+  font-family:var(--font-serif);font-style:italic;font-weight:400;font-size:14.5px;
+  letter-spacing:0;text-transform:none;color:rgba(255,255,255,.7);line-height:1.35}
+.vino-vitigno{
+  font-family:var(--font-serif);font-style:italic;font-size:13px;
+  color:rgba(255,255,255,.48);line-height:1.35}
+
+/* zona / regione / nazione */
+.vino-geo{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;margin-top:1px}
+.vino-regione{
+  font-family:var(--font-serif);font-style:italic;font-size:12.5px;color:rgba(255,255,255,.46)}
+.vino-paese-tag{
+  font-family:var(--font-sans);font-size:9px;font-weight:500;letter-spacing:.16em;
+  text-transform:uppercase;color:rgba(255,255,255,.42)}
+.vino-geo-sep{color:rgba(168,0,22,.55);font-style:normal;user-select:none}
+
+/* prezzi */
+.vino-prezzo{
+  font-family:var(--font-sans);font-size:17px;font-weight:400;letter-spacing:-.01em;
+  font-variant-numeric:tabular-nums;color:rgba(255,255,255,.92);white-space:nowrap}
+.vino-bicchiere{
+  font-family:var(--font-sans);font-size:10px;font-weight:500;letter-spacing:.1em;
+  text-transform:uppercase;color:rgba(209,16,31,.9);white-space:nowrap;
+  font-variant-numeric:tabular-nums}
+
+/* barretta d'accento per categoria (stessi colori della sidebar) */
+.vino-spumante{--accent:#4a90c4} .vino-bianco{--accent:#c8a84b}
+.vino-macerato{--accent:#b07d3a} .vino-rosato{--accent:#c8607a}
+.vino-rosso{--accent:#8B1A1A}    .vino-naturale{--accent:#3a6b4a}
+.vino-dolce{--accent:#9b59b6}    .vino-passito{--accent:#c0392b}
+.vino-liquoroso{--accent:#d35400}.vino-magnum{--accent:#32ADE6}
+.vino-altro{--accent:#78716c}
+
+@media(hover:hover){.vino:hover{background:rgba(168,0,22,.05)}}
+@media(min-width:1024px){
+  .vino{padding:16px 18px 16px 22px}
+  .vino-nome{font-size:20px}
+  .vino-prezzo{font-size:18px}
+}
+@media(max-width:1023px){
+  .vino{padding:14px 12px 14px 16px;gap:12px}
+  .vino-nome{font-size:17px}
+}
+
 </style>
 </head>
 <body class="view-landing">
