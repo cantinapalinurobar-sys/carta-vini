@@ -370,6 +370,7 @@ function _renderListaVini(viewKey, wines, showCalice){
   container.querySelectorAll(".lista-row[data-id]").forEach(function(el){
     el.addEventListener("click", function(){ openModal(el.getAttribute("data-id")); });
   });
+  if(window.pbMeasureStick) window.pbMeasureStick();
 }
 
 var _initDone = false;
@@ -812,4 +813,29 @@ function closeDrawer(){
   },{passive:true});
 })();
 
-init();
+/* Offset reale dei titoli sticky: le barre sopra (ricerca / sort / results)
+   cambiano altezza tra viewport e stati, quindi si misura invece di stimare. */
+(function(){
+  var SEL = [".search-bar-wrap","#sort-bar-wrap",".main-content>.results-bar"];
+  function measure(){
+    var top = 0;
+    SEL.forEach(function(s){
+      var el = document.querySelector(s);
+      if(!el || el.offsetParent === null) return;
+      var cs = getComputedStyle(el);
+      if(cs.position !== "sticky") return;
+      top = Math.max(top, (parseFloat(cs.top)||0) + el.getBoundingClientRect().height);
+    });
+    document.documentElement.style.setProperty("--stick-top", Math.round(top)+"px");
+  }
+  window.pbMeasureStick = measure;
+  addEventListener("resize", measure, {passive:true});
+  addEventListener("orientationchange", measure);
+  if(document.readyState !== "loading") measure();
+  else addEventListener("DOMContentLoaded", measure);
+})();
+
+/* L'ignite dell'insegna occupa i primi ~1.9s: il fetch Supabase e il parsing
+   partono dopo, altrimenti il main thread arriva a singhiozzo. */
+if("requestIdleCallback" in window) requestIdleCallback(function(){ init(); }, {timeout:2600});
+else setTimeout(init, 2600);

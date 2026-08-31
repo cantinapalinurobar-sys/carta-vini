@@ -13,6 +13,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Palinurobar">
 <link rel="preload" as="font" type="font/woff2" href="assets/venezia-bold.woff2" crossorigin>
+<link rel="preload" as="image" href="assets/logo-neon.png" fetchpriority="high">
 <link rel="preload" as="image" href="assets/bar-1000.jpg" media="(min-width:1024px)">
 <link rel="preload" as="image" href="assets/cactus-620.jpg" media="(max-width:1023px)">
 <style>
@@ -53,7 +54,7 @@ body{
   background:var(--bg-dark);
   color:var(--ink);
   font-family:var(--font-sans);font-size:14px;line-height:1.6;
-  max-width:100%;overflow-x:hidden;
+  max-width:100%;overflow-x:hidden;overflow-x:clip;
 }
 a{color:inherit;text-decoration:none}
 button{cursor:pointer;font-family:inherit;border:none;background:none;color:inherit}
@@ -943,6 +944,20 @@ body i,body em,.w-vitigno,.w-prod,.w-geo,.vino-prod,.vino-vitigno,.vino-regione,
     drop-shadow(0 0 66px rgba(74,0,11,.4));
 }
 .pb-neon .off{position:absolute;inset:0;z-index:1;will-change:opacity;filter:brightness(.15) sepia(1) hue-rotate(-30deg) saturate(2.4)}
+/* Sequenza di scarica affidata al compositore: step-end replica esattamente i
+   16 passaggi del vecchio SEQ ma non dipende piu' dal main thread. */
+@keyframes pbIgniteTube{
+  0%{opacity:0}1.11%{opacity:1}3.89%{opacity:0}7.22%{opacity:.5}
+  12.78%{opacity:0}16.11%{opacity:.42}26.11%{opacity:0}35%{opacity:.7}
+  48.33%{opacity:0}52.22%{opacity:.6}64.44%{opacity:0}68.89%{opacity:.82}
+  77.22%{opacity:0}85.56%{opacity:.9}92.22%{opacity:.35}93.89%,100%{opacity:1}}
+@keyframes pbIgniteOff{
+  0%{opacity:1}1.11%{opacity:0}3.89%{opacity:1}7.22%{opacity:.5}
+  12.78%{opacity:1}16.11%{opacity:.58}26.11%{opacity:1}35%{opacity:.3}
+  48.33%{opacity:1}52.22%{opacity:.4}64.44%{opacity:1}68.89%{opacity:.18}
+  77.22%{opacity:1}85.56%{opacity:.1}92.22%{opacity:.65}93.89%,100%{opacity:0}}
+.pb-neon.ignite .tube{animation:pbIgniteTube 1.8s step-end both}
+.pb-neon.ignite .off{animation:pbIgniteOff 1.8s step-end both}
 .pb-neon.lit .tube{opacity:1;animation:pbHum 7s ease-in-out infinite}
 .pb-neon.lit .off{opacity:0}
 /* fallback se il PNG del logo non carica: testo al neon al suo posto */
@@ -1237,8 +1252,9 @@ body.view-cantina .sidebar-filters{max-height:100vh;opacity:1;pointer-events:aut
 @media(prefers-reduced-motion:reduce){
   .pb-rv{transition-duration:.01ms!important;transform:none!important;filter:none!important;opacity:1!important}
   .pb-g1,.pb-mob-bg{animation:none!important}
-  .pb-neon .tube{animation:none!important}
-  .pb-neon.lit .tube{opacity:1}
+  .pb-neon .tube,.pb-neon .off{animation:none!important}
+  .pb-neon.lit .tube,.pb-neon.ignite .tube{opacity:1}
+  .pb-neon.ignite .off{opacity:0}
 }
 
 /* ── FASCE DI PREZZO (scorciatoia sopra la lista Cantina) ───────────────── */
@@ -1383,7 +1399,25 @@ body.view-cantina .sidebar-filters{max-height:100vh;opacity:1;pointer-events:aut
 /* il titolo agganciato non deve essere coperto dalla barra di ricerca mobile,
    che nel foglio base e' sticky a z-index 40 */
 @media(max-width:1023px){
-  .sezione-titolo{top:0;padding:12px 16px 10px}
+  .sezione-titolo{top:var(--stick-top,90px);padding:12px 16px 10px}
+}
+
+/* ── LISTA CALICE: tabella → card su mobile ─────────────────────────────── */
+@media(max-width:1023px){
+  .lista-table,.lista-table tbody{display:block;width:100%}
+  .lista-table thead{display:none}
+  .lista-table tr.lista-row{
+    display:grid;grid-template-columns:minmax(0,1fr) auto;
+    column-gap:14px;row-gap:2px;align-items:baseline;
+    padding:12px 16px;border-bottom:1px solid rgba(168,0,22,.14)}
+  .lista-table tr.lista-row>td{display:block;border:0;padding:0}
+  .lista-row>td:nth-child(1){grid-column:1;grid-row:1}
+  .lista-row>td:nth-child(2){grid-column:1;grid-row:2}
+  .lista-row .lista-bottiglia{grid-column:2;grid-row:1;text-align:right;white-space:nowrap}
+  .lista-row .lista-calice{grid-column:2;grid-row:2;text-align:right;white-space:nowrap;
+    font-size:12px;opacity:.72}
+  .lista-row .lista-calice::before{content:"calice ";font-size:9px;letter-spacing:.1em;
+    text-transform:uppercase;opacity:.65}
 }
 
 </style>
@@ -1642,43 +1676,33 @@ body.view-cantina .sidebar-filters{max-height:100vh;opacity:1;pointer-events:aut
   }
 
   /* ── accensione ──────────────────────────────────────────────────── */
-  /* [ms, opacita' del tubo] — ricavati dai segmenti di scarica del file audio */
-  var SEQ = [[0,0],[20,1],[70,0],[130,.5],[230,0],[290,.42],[470,0],[630,.7],
-             [870,0],[940,.6],[1160,0],[1240,.82],[1390,0],[1540,.9],[1660,.35],[1690,1]];
+  /* La sequenza vive in @keyframes pbIgniteTube/pbIgniteOff (step-end 1.8s):
+     sul main thread resta solo l'aggiunta della classe e il timer finale. */
   var _seqT = [];
   function clearSeq(){ _seqT.forEach(clearTimeout); _seqT = []; }
   function flicker(){
     if(!neon) return;
+    var tube = neon.querySelector(".tube"), off = neon.querySelector(".off");
+    if(!tube) return;
     /* se il logo non e' arrivato, si accende comunque un fallback leggibile */
-    var _img = neon.querySelector(".tube");
-    if(_img && _img.complete && _img.naturalWidth === 0){
+    if(tube.complete && tube.naturalWidth === 0){
       neon.classList.add("lit","pb-noimg");
       return;
     }
-    var tube = neon.querySelector(".tube"), off = neon.querySelector(".off");
-    if(!tube) return;
     clearSeq(); clearTimeout(_t2);
     neon.classList.remove("ignite","lit");
+    tube.style.opacity = ""; if(off) off.style.opacity = "";
 
     /* chi ha chiesto meno animazioni vede l'insegna gia' accesa */
     if(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches){
-      tube.style.opacity = 1; if(off) off.style.opacity = 0;
       neon.classList.add("lit");
       return;
     }
-    tube.style.opacity = 0;
-    if(off) off.style.opacity = 1;
-    SEQ.forEach(function(s){
-      _seqT.push(setTimeout(function(){
-        tube.style.opacity = s[1];
-        /* il vetro spento si smorza man mano che il tubo prende: sotto
-           l'insegna non deve mai restare una lastra scura sul pieno acceso */
-        if(off) off.style.opacity = Math.max(0, 1 - s[1]);
-      }, s[0]));
-    });
+    void neon.offsetWidth;              /* riavvio pulito dell'animazione */
+    neon.classList.add("ignite");
     _t2 = setTimeout(function(){
-      tube.style.opacity = ""; if(off) off.style.opacity = "";
       neon.classList.add("lit");
+      neon.classList.remove("ignite");
     }, IGNITE_DUR);
   }
   /* accende subito, con il suono se disponibile */
@@ -1733,7 +1757,11 @@ body.view-cantina .sidebar-filters{max-height:100vh;opacity:1;pointer-events:aut
     _t1 = setTimeout(function(){ landing.classList.add("on"); }, 250);
     _t3 = setTimeout(igniteAuto, IGNITE_AT);
   }
-  function stopIntro(){ clearTimeout(_t1); clearTimeout(_t2); clearTimeout(_t3); clearTimeout(_t4); clearSeq(); fadeOut(); }
+  function stopIntro(){
+    clearTimeout(_t1); clearTimeout(_t2); clearTimeout(_t3); clearTimeout(_t4); clearSeq();
+    if(neon && neon.classList.contains("ignite")){ neon.classList.remove("ignite"); neon.classList.add("lit"); }
+    fadeOut();
+  }
   window.pbRunIntro = runIntro;
 
   /* ── navigazione ─────────────────────────────────────────────────── */
