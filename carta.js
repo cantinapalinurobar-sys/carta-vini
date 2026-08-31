@@ -348,29 +348,44 @@ function _renderListaVini(viewKey, wines, showCalice){
   var container = document.getElementById(containerId);
   if(!container) return;
   if(!wines.length){ container.innerHTML="<div class=\"vuoto\">Nessun vino disponibile.</div>"; return; }
-  var sorted = wines.slice().sort(function(a,b){ return (a.n||"").localeCompare(b.n||"","it"); });
-  var html = "<table class=\"lista-table\"><thead><tr>"
-    +"<th>Vino</th><th>Tipologia</th>"
-    +(showCalice ? "<th class=\"col-price\">Al Calice</th>" : "")
-    +"<th class=\"col-price\">Bottiglia</th>"
-    +"</tr></thead><tbody>";
-  sorted.forEach(function(w){
-    var nomeHtml = esc(w.n)+(w.annata ? " <span class=\"lista-annata\">"+esc(w.annata)+"</span>" : "");
-    var prodHtml = w.produttore ? "<div class=\"lista-prod\">"+esc(w.produttore)+"</div>" : "";
-    var tipologia = w.tipologia ? (CAT_LABELS[w.tipologia]||w.tipologia) : "—";
-    html += "<tr class=\"lista-row\" data-id=\""+w.id+"\">"
-      +"<td><span class=\"lista-nome\">"+nomeHtml+"</span>"+prodHtml+"</td>"
-      +"<td><span class=\"lista-tipo\">"+esc(tipologia)+"</span></td>"
-      +(showCalice ? "<td class=\"col-price lista-calice\">"+(w.b||"—")+"</td>" : "")
-      +"<td class=\"col-price lista-bottiglia\">"+(w.p||"—")+"</td>"
-      +"</tr>";
+
+  var soloCalice = viewKey === "calice";
+
+  /* raggruppa per tipologia nell'ordine della carta, come in Cantina.
+     Le tipologie fuori CAT_ORDER finiscono in coda, in ordine alfabetico. */
+  var gruppi = {};
+  wines.forEach(function(w){
+    var k = w.tipologia || "Altro";
+    (gruppi[k] || (gruppi[k] = [])).push(w);
   });
-  html += "</tbody></table>";
+  var chiavi = CAT_ORDER.filter(function(k){ return gruppi[k]; })
+    .concat(Object.keys(gruppi).filter(function(k){ return CAT_ORDER.indexOf(k) === -1; }).sort());
+
+  var html = "";
+  chiavi.forEach(function(cat){
+    var sorted = gruppi[cat].slice().sort(function(a,b){ return (a.n||"").localeCompare(b.n||"","it"); });
+    html += "<div class=\"sezione\"><div class=\"sezione-titolo\">"+esc(CAT_LABELS[cat]||cat)+"</div>"
+      +"<table class=\"lista-table\"><thead><tr>"
+      +"<th>Vino</th>"
+      +(showCalice ? "<th class=\"col-price\">Al Calice</th>" : "")
+      +(soloCalice ? "" : "<th class=\"col-price\">Bottiglia</th>")
+      +"</tr></thead><tbody>";
+    sorted.forEach(function(w){
+      var nomeHtml = esc(w.n)+(w.annata ? " <span class=\"lista-annata\">"+esc(w.annata)+"</span>" : "");
+      var prodHtml = w.produttore ? "<div class=\"lista-prod\">"+esc(w.produttore)+"</div>" : "";
+      html += "<tr class=\"lista-row\" data-id=\""+w.id+"\">"
+        +"<td><span class=\"lista-nome\">"+nomeHtml+"</span>"+prodHtml+"</td>"
+        +(showCalice ? "<td class=\"col-price lista-calice\">"+(w.b||"—")+"</td>" : "")
+        +(soloCalice ? "" : "<td class=\"col-price lista-bottiglia\">"+(w.p||"—")+"</td>")
+        +"</tr>";
+    });
+    html += "</tbody></table></div>";
+  });
+
   container.innerHTML = html;
   container.querySelectorAll(".lista-row[data-id]").forEach(function(el){
     el.addEventListener("click", function(){ openModal(el.getAttribute("data-id")); });
   });
-  if(window.pbMeasureStick) window.pbMeasureStick();
 }
 
 var _initDone = false;
@@ -678,7 +693,8 @@ function openModal(id){
   if(annataEl) annataEl.textContent = w.annata?"Annata "+w.annata:"";
 
   var p="";
-  if(w.p) p+="<div class=\"modal-p-item\"><div class=\"modal-p-lbl\">Bottiglia</div><div class=\"modal-p-val\">"+esc(w.p)+"</div></div>";
+  var _soloCalice = document.body.classList.contains("view-calice");
+  if(w.p && !_soloCalice) p+="<div class=\"modal-p-item\"><div class=\"modal-p-lbl\">Bottiglia</div><div class=\"modal-p-val\">"+esc(w.p)+"</div></div>";
   if(w.b) p+="<div class=\"modal-p-item\"><div class=\"modal-p-lbl\">Al calice</div><div class=\"modal-p-val\">"+esc(w.b)+"</div></div>";
   if(prezzoEl) prezzoEl.innerHTML = p;
 
@@ -813,29 +829,4 @@ function closeDrawer(){
   },{passive:true});
 })();
 
-/* Offset reale dei titoli sticky: le barre sopra (ricerca / sort / results)
-   cambiano altezza tra viewport e stati, quindi si misura invece di stimare. */
-(function(){
-  var SEL = [".search-bar-wrap","#sort-bar-wrap",".main-content>.results-bar"];
-  function measure(){
-    var top = 0;
-    SEL.forEach(function(s){
-      var el = document.querySelector(s);
-      if(!el || el.offsetParent === null) return;
-      var cs = getComputedStyle(el);
-      if(cs.position !== "sticky") return;
-      top = Math.max(top, (parseFloat(cs.top)||0) + el.getBoundingClientRect().height);
-    });
-    document.documentElement.style.setProperty("--stick-top", Math.round(top)+"px");
-  }
-  window.pbMeasureStick = measure;
-  addEventListener("resize", measure, {passive:true});
-  addEventListener("orientationchange", measure);
-  if(document.readyState !== "loading") measure();
-  else addEventListener("DOMContentLoaded", measure);
-})();
-
-/* L'ignite dell'insegna occupa i primi ~1.9s: il fetch Supabase e il parsing
-   partono dopo, altrimenti il main thread arriva a singhiozzo. */
-if("requestIdleCallback" in window) requestIdleCallback(function(){ init(); }, {timeout:2600});
-else setTimeout(init, 2600);
+init();
