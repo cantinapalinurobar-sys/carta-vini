@@ -797,7 +797,7 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;color:inhe
 /* Titolo sezione: resta agganciato mentre si scorre */
 .sezione{margin-bottom:26px}
 .sezione-titolo{
-  position:sticky; top:0; z-index:5;
+  position:sticky; top:var(--stick-top,0px); z-index:5;
   background:linear-gradient(#0a0608 78%, rgba(10,6,8,0));
   padding:14px 16px 11px;
   border-bottom:1px solid rgba(168,0,22,.18);
@@ -962,12 +962,8 @@ body i,body em,.w-vitigno,.w-prod,.w-geo,.vino-prod,.vino-vitigno,.vino-regione,
 
 /* luce che colpisce la parete dietro l'insegna */
 .pb-neon::before{content:"";position:absolute;left:-38%;top:-34%;right:-38%;bottom:-34%;
-  z-index:0;pointer-events:none;opacity:0;transition:opacity 1.4s ease .2s;
+  z-index:0;pointer-events:none;opacity:0;
   background:radial-gradient(closest-side,rgba(134,0,20,.34),rgba(90,0,14,.14) 55%,transparent 78%)}
-.pb-neon.lit::before,.pb-neon.ignite::before{opacity:1}
-
-.pb-neon.lit .tube{opacity:1;animation:pbHum 7s ease-in-out infinite}
-.pb-neon.lit .off{opacity:0}
 
 /* Sequenza ricavata dai segmenti di scarica dell'MP3, su 1.8s.
    steps(1,end): commutazione istantanea, nessuna dissolvenza.
@@ -983,8 +979,31 @@ body i,body em,.w-vitigno,.w-prod,.w-geo,.vino-prod,.vino-vitigno,.vino-regione,
 16.11%{opacity:.58}26.11%{opacity:1}35%{opacity:.3}48.33%{opacity:1}52.22%{opacity:.4}
 64.44%{opacity:1}68.89%{opacity:.18}77.22%{opacity:1}85.56%{opacity:.1}92.22%{opacity:.65}
 93.89%,100%{opacity:0}}
-.pb-neon.ignite .tube{animation:pbIgniteTube 1.8s steps(1,end) both}
-.pb-neon.ignite .off {animation:pbIgniteOff  1.8s steps(1,end) both}
+@keyframes pbHalo{0%,60%{opacity:0}75%{opacity:.45}100%{opacity:1}}
+
+/* L'insegna resta spenta finche' non arriva la classe .replay.
+   Il browser interno di WhatsApp/Instagram renderizza la pagina PRIMA di
+   presentarla: un'animazione ancorata al load finiva dietro la transizione di
+   apertura e l'utente trovava l'insegna gia' accesa. L'accensione parte quindi
+   sul primo frame realmente visibile — vedi il gate in fondo allo script. */
+.pb-neon .tube{opacity:0}
+.pb-neon .off{opacity:1}
+.pb-neon::before{opacity:0}
+
+.pb-neon.replay .tube{animation:pbIgniteTube 1.8s steps(1,end) 0s both,
+                                pbHum 7s ease-in-out 1.8s infinite}
+.pb-neon.replay .off {animation:pbIgniteOff 1.8s steps(1,end) 0s both}
+.pb-neon.replay::before{animation:pbHalo 1.8s ease 0s both}
+
+/* gia' accesa: si torna alla home dalla lista, niente seconda accensione */
+.pb-neon.no-ignite .tube{animation:pbHum 7s ease-in-out infinite;opacity:1}
+.pb-neon.no-ignite .off{animation:none;opacity:0}
+.pb-neon.no-ignite::before{animation:none;opacity:1}
+
+/* spenta a mano dall'interruttore */
+.pb-neon.dark .tube{animation:none;opacity:0}
+.pb-neon.dark .off{animation:none;opacity:1}
+.pb-neon.dark::before{animation:none;opacity:0}
 
 /* fallback se il PNG del logo non carica: testo al neon al suo posto */
 .pb-neon.pb-noimg::after{content:"Palinurobar";position:absolute;inset:0;
@@ -1313,8 +1332,11 @@ body.view-cantina .sidebar-filters{max-height:100vh;opacity:1;pointer-events:aut
 @media(prefers-reduced-motion:reduce){
   .pb-rv{transition-duration:.01ms!important;transform:none!important;filter:none!important;opacity:1!important}
   .pb-g1,.pb-mob-bg{animation:none!important}
-  .pb-neon .tube{animation:none!important}
-  .pb-neon.lit .tube{opacity:1}
+  .pb-neon .tube{animation:none!important;opacity:1}
+  .pb-neon .off{animation:none!important;opacity:0}
+  .pb-neon::before{animation:none!important;opacity:1}
+  .pb-neon.dark .tube{opacity:0}
+  .pb-neon.dark .off{opacity:1}
 }
 
 /* ── FASCE DI PREZZO (scorciatoia sopra la lista Cantina) ───────────────── */
@@ -1441,6 +1463,11 @@ body.view-cantina .sidebar-filters{max-height:100vh;opacity:1;pointer-events:aut
 @media(prefers-reduced-motion:reduce){.pb-stagger{opacity:1;animation:none}}
 
 
+/* Al Calice: mai il prezzo della bottiglia, anche con carta.js in cache */
+body.view-calice .lista-bottiglia{display:none!important}
+body.view-calice .lista-table thead th:nth-child(4),
+body.view-calice .lista-table tbody td:nth-child(4){display:none!important}
+
 /* ── TITOLO SEZIONE AGGANCIATO IN ALTO ──────────────────────────────────── */
 /* I wrapper introdotti (#view-cantina in flex) non devono creare clipping:
    position:sticky smette di funzionare se un antenato ha overflow != visible. */
@@ -1448,7 +1475,7 @@ body.view-cantina .sidebar-filters{max-height:100vh;opacity:1;pointer-events:aut
   overflow:visible}
 .sezione{margin-bottom:26px;position:relative}
 .sezione-titolo{
-  position:sticky;top:0;z-index:30;
+  position:sticky;top:var(--stick-top,0px);z-index:30;
   background:#0a0608;
   padding:14px 18px 11px;
   border-bottom:1px solid rgba(168,0,22,.22);
@@ -1459,7 +1486,7 @@ body.view-cantina .sidebar-filters{max-height:100vh;opacity:1;pointer-events:aut
 /* il titolo agganciato non deve essere coperto dalla barra di ricerca mobile,
    che nel foglio base e' sticky a z-index 40 */
 @media(max-width:1023px){
-  .sezione-titolo{top:0;padding:12px 16px 10px}
+  .sezione-titolo{top:var(--stick-top,0px);padding:12px 16px 10px}
 }
 
 </style>
@@ -1724,10 +1751,14 @@ body.view-cantina .sidebar-filters{max-height:100vh;opacity:1;pointer-events:aut
   }
 
   /* ── accensione ──────────────────────────────────────────────────── */
-  /* La sequenza di scarica vive nelle @keyframes pbIgnite* del CSS: girano sul
-     compositor, quindi il jank del main thread non le ritarda piu'. */
+  /* L'accensione e' interamente nel CSS (@keyframes pbIgnite*, applicate di
+     default su .pb-neon .tube/.off). Parte al primo frame utile, non dipende
+     da questo script, da fonts.ready, dal fetch Supabase ne' da alcun timer.
+     Qui restano solo audio, levetta e comandi manuali. */
+  var T0 = (window.performance && performance.now) ? performance.now() : Date.now();
+  function since(){ return ((window.performance && performance.now) ? performance.now() : Date.now()) - T0; }
   var _seqT = [];
-  function clearSeq(){ _seqT.forEach(clearTimeout); _seqT = []; if(neon) neon.classList.remove("ignite"); }
+  function clearSeq(){ _seqT.forEach(clearTimeout); _seqT = []; }
 
   /* stato della levetta dell'interruttore */
   function swOn(v){
@@ -1736,62 +1767,33 @@ body.view-cantina .sidebar-filters{max-height:100vh;opacity:1;pointer-events:aut
     if(b) b.setAttribute("aria-checked", v ? "true" : "false");
   }
 
-  function flicker(){
+  /* fallback leggibile se il PNG del logo non arriva */
+  (function(){
     if(!neon) return;
-    /* se il logo non e' arrivato, si accende comunque un fallback leggibile */
-    var _img = neon.querySelector(".ratio");
-    if(_img && _img.complete && _img.naturalWidth === 0){
-      neon.classList.add("lit","pb-noimg"); swOn(true);
-      return;
-    }
-    var tube = neon.querySelector(".tube"), off = neon.querySelector(".off");
-    if(!tube) return;
-    clearSeq(); clearTimeout(_t2);
-    /* le inline batterebbero .lit a fine ciclo */
-    tube.style.opacity = ""; if(off) off.style.opacity = "";
-    neon.classList.remove("ignite","lit");
-    swOn(false);
-
-    /* chi ha chiesto meno animazioni vede l'insegna gia' accesa */
-    if(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches){
-      neon.classList.add("lit"); swOn(true);
-      return;
-    }
-    void neon.offsetWidth;
-    neon.classList.add("ignite");
-    /* animation-fill-mode:both tiene lo stato finale anche se questo
-       timer arriva in ritardo: l'insegna non resta mai spenta */
-    _t2 = setTimeout(function(){
-      neon.classList.remove("ignite");
-      neon.classList.add("lit");
-      swOn(true);
-    }, IGNITE_DUR + 120);
-  }
+    var img = neon.querySelector(".ratio");
+    if(!img) return;
+    img.addEventListener("error", function(){ neon.classList.add("pb-noimg"); });
+    if(img.complete && img.naturalWidth === 0) neon.classList.add("pb-noimg");
+  })();
 
   /* spegnimento manuale dall'interruttore */
   function neonOff(){
     clearTimeout(_t2); clearSeq();
-    if(neon){
-      neon.classList.remove("ignite","lit");
-      var t = neon.querySelector(".tube"), f = neon.querySelector(".off");
-      if(t) t.style.opacity = ""; if(f) f.style.opacity = "";
-    }
+    if(neon){ neon.classList.remove("replay","no-ignite"); neon.classList.add("dark"); }
     swOn(false); needsSound(false); unbindGesture(); fadeOut();
   }
-  /* accende subito, con il suono se disponibile */
-  function igniteNow(){ markIntroDone(); playSound().catch(function(){}); flicker(); }
-
-  /* tentativo automatico all'ingresso: se l'audio passa il neon parte in sync,
-     altrimenti resta spento in attesa di un gesto — e comunque si accende
-     dopo qualche secondo, per non lasciare la pagina morta. */
-  /* Il flicker parte SEMPRE e in orario. L'audio e' un tentativo parallelo:
-     se il browser lo blocca, l'accensione si vede lo stesso e resta il
-     pulsante per riascoltarla col suono. */
-  function igniteAuto(){
-    markIntroDone();
-    flicker();
+  /* riaccensione manuale: rigioca il flicker da capo */
+  function neonOn(){
+    clearTimeout(_t2);
+    if(neon){
+      neon.classList.remove("dark","no-ignite","replay");
+      void neon.offsetWidth;              /* riavvio pulito dell'animazione */
+      neon.classList.add("replay");
+    }
     playSound().catch(function(){ needsSound(true); bindGesture(); });
+    _t2 = setTimeout(function(){ swOn(true); }, IGNITE_DUR);
   }
+  function igniteNow(){ markIntroDone(); neonOn(); }
 
   window.pbToggle = function(ev){
     if(ev){ ev.preventDefault(); ev.stopPropagation(); }
@@ -1800,39 +1802,98 @@ body.view-cantina .sidebar-filters{max-height:100vh;opacity:1;pointer-events:aut
   };
   window.pbUnlock = window.pbToggle;   /* compatibilita' */
 
+  /* ── GATE DI VISIBILITA' ───────────────────────────────────────────
+     L'accensione non parte a un offset fisso dal load, ma sul primo frame in
+     cui la pagina e' davvero sullo schermo. In-app browser (WhatsApp,
+     Instagram, Messenger) montano il documento dietro la transizione di
+     apertura: senza questo gate il flicker finiva prima di essere presentato.
+
+     Condizioni, tutte necessarie:
+       1. document.readyState !== "loading"
+       2. document.visibilityState === "visible"
+       3. il PNG del logo e' decodificato (altrimenti si accende il vuoto)
+       4. due requestAnimationFrame consecutivi = un frame gia' composto
+     Poi mezzo secondo di insegna spenta, cosi' lo stacco spento→acceso si
+     vede. Se qualcosa non si sblocca, un fallback accende comunque a 6s. */
+  var _armed = false, _fired = false, _fallback = null;
+  var SETTLE = 500;
+
+  function fireIgnite(){
+    if(_fired) return;
+    _fired = true;
+    clearTimeout(_fallback);
+    markIntroDone();
+    if(neon && !neon.classList.contains("dark")){
+      neon.classList.remove("no-ignite","replay");
+      void neon.offsetWidth;
+      neon.classList.add("replay");
+    }
+    playSound().catch(function(){ needsSound(true); bindGesture(); });
+    _t2 = setTimeout(function(){
+      if(neon && neon.classList.contains("dark")) return;
+      swOn(true);
+    }, IGNITE_DUR);
+  }
+
+  function armIgnite(){
+    if(_armed || _fired) return;
+    if(document.readyState === "loading") return;
+    if(document.visibilityState === "hidden") return;
+    _armed = true;
+    var img = neon && neon.querySelector(".ratio");
+    var ready = (img && img.decode) ? img.decode().catch(function(){}) : Promise.resolve();
+    ready.then(function(){
+      requestAnimationFrame(function(){
+        requestAnimationFrame(function(){
+          /* la pagina puo' essere tornata nascosta nel frattempo */
+          if(document.visibilityState === "hidden"){ _armed = false; return; }
+          setTimeout(fireIgnite, SETTLE);
+        });
+      });
+    });
+  }
+
+  (function(){
+    if(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches){
+      markIntroDone(); _fired = true;
+      if(neon) neon.classList.add("no-ignite");
+      swOn(true);
+      return;
+    }
+    document.addEventListener("visibilitychange", armIgnite);
+    addEventListener("pageshow", armIgnite);
+    addEventListener("load", armIgnite);
+    if(document.readyState === "loading") addEventListener("DOMContentLoaded", armIgnite);
+    else armIgnite();
+    /* rete di sicurezza: nessun evento utile entro 6s, si accende lo stesso */
+    _fallback = setTimeout(fireIgnite, 6000);
+  })();
+
   function runIntro(){
-    clearTimeout(_t1); clearTimeout(_t2); clearTimeout(_t3); clearTimeout(_t4);
+    clearTimeout(_t1); clearTimeout(_t3); clearTimeout(_t4);
     unbindGesture();
     if(!landing) return;
     stopFade();
     if(snd){ try{ snd.pause(); snd.currentTime = 0; }catch(e){} }
 
     /* L'accensione e' un evento d'ingresso: avviene una volta per sessione.
-       Tornando alla home l'insegna e' gia' accesa, senza flicker ne' audio. */
+       Tornando alla home dalla lista .pb-landing passa da display:none a
+       visibile e il browser rigiocherebbe le @keyframes da capo: .no-ignite
+       le disattiva e lascia l'insegna accesa col solo ronzio. */
     if(_introDone){
       landing.classList.add("on");
-      if(neon){
-        neon.classList.remove("ignite");
-        var t = neon.querySelector(".tube"), f = neon.querySelector(".off");
-        if(t) t.style.opacity = "";
-        if(f) f.style.opacity = "";
-        neon.classList.add("lit");
+      if(neon && !neon.classList.contains("dark")){
+        neon.classList.remove("replay");
+        neon.classList.add("no-ignite");
+        swOn(true);
       }
-      swOn(true);
       return;
     }
     landing.classList.remove("on");
-    clearSeq();
-    if(neon){
-      neon.classList.remove("ignite","lit");
-      var _tb = neon.querySelector(".tube"), _of = neon.querySelector(".off");
-      if(_tb) _tb.style.opacity = ""; /* lo stato spento e' gia' il default CSS */
-      if(_of) _of.style.opacity = "";
-    }
-    swOn(false);
     void landing.offsetWidth;
     _t1 = setTimeout(function(){ landing.classList.add("on"); }, 250);
-    _t3 = setTimeout(igniteAuto, IGNITE_AT);
+    /* l'accensione la decide il gate di visibilita', non questo timer */
+    armIgnite();
   }
   function stopIntro(){ clearTimeout(_t1); clearTimeout(_t2); clearTimeout(_t3); clearTimeout(_t4); clearSeq(); fadeOut(); }
   window.pbRunIntro = runIntro;
@@ -1887,6 +1948,32 @@ body.view-cantina .sidebar-filters{max-height:100vh;opacity:1;pointer-events:aut
     }
   }, 40);
 
+  /* ── offset dei titoli agganciati ─────────────────────────────────
+     Sopra la lista ci sono fino a tre barre (back fissa, ricerca, sort) che
+     cambiano altezza tra viewport, orientamento e stato. Con top:0 il titolo
+     di sezione si fermava sotto di loro e i testi si accavallavano.
+     Si misura il bordo inferiore reale invece di stimarlo. */
+  var STICK_SEL = [".btn-back-mobile",".search-bar-wrap","#sort-bar-wrap",".main-content>.results-bar"];
+  function measureStick(){
+    var top = 0;
+    STICK_SEL.forEach(function(sel){
+      var el = document.querySelector(sel);
+      if(!el) return;
+      var cs = getComputedStyle(el);
+      if(cs.display === "none" || cs.visibility === "hidden") return;
+      if(cs.position !== "sticky" && cs.position !== "fixed") return;
+      var h = el.getBoundingClientRect().height;
+      if(!h) return;
+      top = Math.max(top, (parseFloat(cs.top) || 0) + h);
+    });
+    document.documentElement.style.setProperty("--stick-top", Math.round(top) + "px");
+  }
+  window.pbMeasureStick = measureStick;
+  addEventListener("resize", measureStick, {passive:true});
+  addEventListener("orientationchange", function(){ setTimeout(measureStick, 180); });
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(measureStick);
+  measureStick();
+
   /* ── entrata a cascata delle righe ────────────────────────────────
      Osserva le liste renderizzate da carta.js: nessuna modifica al suo codice.
      Anima solo le prime righe, il resto compare subito (283 etichette). */
@@ -1894,7 +1981,7 @@ body.view-cantina .sidebar-filters{max-height:100vh;opacity:1;pointer-events:aut
   if(!reduce){
     var MAX = 22, STEP = 26;
     function stagger(root){
-      var rows = root.querySelectorAll(".vino, .lista-row, .sezione-titolo");
+      var rows = root.querySelectorAll(".vino, .lista-row");
       for(var i=0;i<rows.length && i<MAX;i++){
         rows[i].classList.remove("pb-stagger");
         void rows[i].offsetWidth;
@@ -1904,7 +1991,7 @@ body.view-cantina .sidebar-filters{max-height:100vh;opacity:1;pointer-events:aut
     }
     var mo = new MutationObserver(function(muts){
       for(var i=0;i<muts.length;i++){
-        if(muts[i].addedNodes.length){ stagger(muts[i].target); break; }
+        if(muts[i].addedNodes.length){ stagger(muts[i].target); measureStick(); break; }
       }
     });
     ["wine-list","calice-list","mescita-list"].forEach(function(id){
@@ -1926,6 +2013,6 @@ body.view-cantina .sidebar-filters{max-height:100vh;opacity:1;pointer-events:aut
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="carta.js"></script>
+<script src="carta.js?v=7"></script>
 </body>
 </html>

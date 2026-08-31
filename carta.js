@@ -315,6 +315,8 @@ function setView(view){
   currentView = view;
   window.scrollTo(0,0);
   document.body.className = "view-" + view;
+  /* cambiando vista cambiano le barre in alto: l'offset dei titoli va rifatto */
+  if(window.pbMeasureStick) requestAnimationFrame(window.pbMeasureStick);
   var allViews = ["view-landing","view-calice","view-mescita","view-cantina"];
   allViews.forEach(function(id){
     var el = document.getElementById(id);
@@ -386,6 +388,7 @@ function _renderListaVini(viewKey, wines, showCalice){
   container.querySelectorAll(".lista-row[data-id]").forEach(function(el){
     el.addEventListener("click", function(){ openModal(el.getAttribute("data-id")); });
   });
+  if(window.pbMeasureStick) window.pbMeasureStick();
 }
 
 var _initDone = false;
@@ -480,6 +483,7 @@ function applyFilters(){
   document.querySelectorAll(".vino[data-id]").forEach(function(el){
     el.addEventListener("click",function(){ openModal(el.getAttribute("data-id")); });
   });
+  if(window.pbMeasureStick) window.pbMeasureStick();
 }
 
 function _buildWineRow(w,cat){
