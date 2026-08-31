@@ -402,6 +402,30 @@ function _buildIdxById(){
   });
 }
 
+
+// ── RICERCA TOLLERANTE ───────────────────────────────────────────────────────
+// Ignora accenti, apostrofi tipografici e ordine delle parole:
+// "barbera dasti", "asti barbera" e "Barbera d’Asti" danno lo stesso risultato.
+function _norm(s){
+  return (s||"").toString().toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .replace(/[\u2018\u2019\u02bc`\u00b4']/g," ")
+    .replace(/[^a-z0-9]+/g," ")
+    .trim();
+}
+function _matchSearch(hay, query){
+  var q = _norm(query);
+  if(!q) return true;
+  var h  = _norm(hay);
+  var hc = h.replace(/ /g,"");        // variante senza separatori: "dasti" trova "d asti"
+  var toks = q.split(" ");
+  for(var i=0;i<toks.length;i++){
+    var t = toks[i];
+    if(h.indexOf(t) < 0 && hc.indexOf(t.replace(/ /g,"")) < 0) return false;
+  }
+  return true;
+}
+
 function applyFilters(){
   var sortSel = document.getElementById("sort-sel");
   var sortVal = sortSel ? sortSel.value : "default";
@@ -410,9 +434,8 @@ function applyFilters(){
   catsToShow.forEach(function(cat){
     var wines = (db[cat]||[]).filter(function(w){
       if(fSearch){
-        var q=fSearch.toLowerCase();
-        var hay=(w.n||"")+(w.produttore||"")+(w.vitigno||"")+(w.zona||"")+(w.regione||"")+(w.paese||"")+(w.nazione||"")+(w.annata||"");
-        if(hay.toLowerCase().indexOf(q)<0) return false;
+        var hay=[w.n,w.produttore,w.vitigno,w.zona,w.regione,w.paese,w.nazione,w.annata].join(" ");
+        if(!_matchSearch(hay, fSearch)) return false;
       }
       if(fState.paese && (w.paese||"").toLowerCase()!==fState.paese.toLowerCase()) return false;
       if(fState.regione && (w.regione||"").toLowerCase()!==fState.regione.toLowerCase()) return false;
