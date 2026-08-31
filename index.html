@@ -932,7 +932,7 @@ body i,body em,.w-vitigno,.w-prod,.w-geo,.vino-prod,.vino-vitigno,.vino-regione,
 .pb-neon{position:relative;display:block}
 .pb-neon img{display:block;width:100%;height:auto}
 .pb-neon .tube{
-  opacity:0;
+  opacity:0;will-change:opacity;transform:translateZ(0);
   filter:
     drop-shadow(0 0 1px #fff)
     drop-shadow(0 0 3px rgba(255,214,214,.9))
@@ -941,21 +941,7 @@ body i,body em,.w-vitigno,.w-prod,.w-geo,.vino-prod,.vino-vitigno,.vino-regione,
     drop-shadow(0 0 38px rgba(168,0,22,.5))
     drop-shadow(0 0 66px rgba(74,0,11,.4));
 }
-.pb-neon .off{position:absolute;inset:0;filter:brightness(.15) sepia(1) hue-rotate(-30deg) saturate(2.4)}
-.pb-neon.ignite .tube{animation:pbIgnite 1.8s steps(1,end) forwards}
-.pb-neon.ignite .off{animation:pbOff 1.8s steps(1,end) forwards}
-@keyframes pbIgnite{
-  0%{opacity:0}
-  1.1%{opacity:1}      3.9%{opacity:0}
-  7.2%{opacity:.50}   12.8%{opacity:0}
-  16.1%{opacity:.42}  26.1%{opacity:0}
-  35.0%{opacity:.70}  48.3%{opacity:0}
-  52.2%{opacity:.60}  64.4%{opacity:0}
-  68.9%{opacity:.82}  77.2%{opacity:0}
-  85.6%{opacity:.90}  92.2%{opacity:.35}
-  93.9%{opacity:1}   100%{opacity:1}
-}
-@keyframes pbOff{0%,85.5%{opacity:1}85.6%{opacity:.45}93.9%{opacity:0}100%{opacity:0}}
+.pb-neon .off{position:absolute;inset:0;will-change:opacity;filter:brightness(.15) sepia(1) hue-rotate(-30deg) saturate(2.4)}
 .pb-neon.lit .tube{opacity:1;animation:pbHum 7s ease-in-out infinite}
 .pb-neon.lit .off{opacity:0}
 @keyframes pbHum{0%,100%{opacity:1}31%{opacity:.95}32.4%{opacity:1}67%{opacity:.92}68.6%{opacity:1}}
@@ -1023,8 +1009,8 @@ body.view-landing .filter-fab,body.view-landing .pb-back{display:none!important}
     background:linear-gradient(180deg,transparent,rgba(168,0,22,.28),transparent)}
   /* blocco centrale elastico: si comprime prima di toccare il footer */
   .pb-core{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center}
-  .pb-neon{width:min(272px,30vh);margin:0 auto clamp(12px,2.4vh,22px)}
-  .pb-tagline{font-size:12px;text-align:center;margin-bottom:clamp(26px,8vh,78px)}
+  .pb-neon{width:min(420px,44vh);margin:0 auto clamp(10px,2vh,20px)}
+  .pb-tagline{font-size:12.5px;text-align:center;margin-bottom:clamp(22px,6vh,58px)}
   .pb-ttl{font-size:clamp(30px,4.6vh,40px);text-align:center;margin-bottom:clamp(14px,2.6vh,24px)}
   .pb-ctas{gap:clamp(9px,1.4vh,13px)}
   .pb-cta{padding:clamp(14px,2vh,19px) 26px}
@@ -1034,6 +1020,11 @@ body.view-landing .filter-fab,body.view-landing .pb-back{display:none!important}
 }
 /* Landing — MOBILE */
 @media(max-width:1023px){
+  .pb-neon .tube{filter:
+    drop-shadow(0 0 1px #fff)
+    drop-shadow(0 0 6px var(--neon-hot))
+    drop-shadow(0 0 16px var(--neon))
+    drop-shadow(0 0 34px rgba(168,0,22,.45))}
   .pb-gallery{display:none}
   .pb-landing{background:#0a0607}
   .pb-mob-bg{position:absolute;inset:0;background-size:cover;background-position:50% 42%;
@@ -1084,7 +1075,20 @@ body.view-landing{overflow:hidden}
 .pb-sound:hover{border-color:rgba(209,16,31,.75);color:#fff;box-shadow:0 0 22px rgba(168,0,22,.3)}
 .pb-sound-ico{font-size:12px;letter-spacing:0;color:var(--neon-hot)}
 @media(min-width:1024px){.pb-sound{right:28px;bottom:28px}}
-@media(max-width:1023px){.pb-sound{right:22px;top:60px}}
+@media(max-width:1023px){
+  /* icona sola in un angolo libero: la pill con etichetta copriva i testi */
+  .pb-sound{right:14px;bottom:calc(12px + env(safe-area-inset-bottom,0px));top:auto;
+    width:42px;height:42px;padding:0;justify-content:center;gap:0;border-radius:999px}
+  .pb-sound #pb-sound-lbl{position:absolute;width:1px;height:1px;margin:-1px;
+    overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .pb-sound-ico{font-size:16px;color:rgba(255,255,255,.75)}
+  .pb-landing.needs-sound .pb-sound-ico{color:var(--neon-hot)}
+  .pb-landing.needs-sound .pb-sound{animation:pbPulse 2.6s ease-in-out infinite}
+  @keyframes pbPulse{0%,100%{box-shadow:0 0 0 0 rgba(209,16,31,.45)}
+                     70%{box-shadow:0 0 0 12px rgba(209,16,31,0)}}
+  /* il footer lascia spazio al tondo */
+  .pb-foot{padding-right:52px;padding-left:52px}
+}
 
 /* ── BACK ───────────────────────────────────────────────────────────────── */
 .pb-back{
@@ -1630,13 +1634,36 @@ body.view-cantina .sidebar-filters{max-height:100vh;opacity:1;pointer-events:aut
   }
 
   /* ── accensione ──────────────────────────────────────────────────── */
+  /* [ms, opacita' del tubo] — ricavati dai segmenti di scarica del file audio */
+  var SEQ = [[0,0],[20,1],[70,0],[130,.5],[230,0],[290,.42],[470,0],[630,.7],
+             [870,0],[940,.6],[1160,0],[1240,.82],[1390,0],[1540,.9],[1660,.35],[1690,1]];
+  var _seqT = [];
+  function clearSeq(){ _seqT.forEach(clearTimeout); _seqT = []; }
   function flicker(){
     if(!neon) return;
+    var tube = neon.querySelector(".tube"), off = neon.querySelector(".off");
+    if(!tube) return;
+    clearSeq(); clearTimeout(_t2);
     neon.classList.remove("ignite","lit");
-    void neon.offsetWidth;
-    neon.classList.add("ignite");
-    clearTimeout(_t2);
-    _t2 = setTimeout(function(){ neon.classList.add("lit"); }, IGNITE_DUR);
+
+    /* chi ha chiesto meno animazioni vede l'insegna gia' accesa */
+    if(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches){
+      tube.style.opacity = 1; if(off) off.style.opacity = 0;
+      neon.classList.add("lit");
+      return;
+    }
+    tube.style.opacity = 0;
+    if(off) off.style.opacity = 1;
+    SEQ.forEach(function(s){
+      _seqT.push(setTimeout(function(){
+        tube.style.opacity = s[1];
+        if(off) off.style.opacity = s[0] >= 1540 ? (s[0] >= 1690 ? 0 : .45) : 1;
+      }, s[0]));
+    });
+    _t2 = setTimeout(function(){
+      tube.style.opacity = ""; if(off) off.style.opacity = "";
+      neon.classList.add("lit");
+    }, IGNITE_DUR);
   }
   /* accende subito, con il suono se disponibile */
   function igniteNow(){ markIntroDone(); playSound().catch(function(){}); flicker(); }
@@ -1670,16 +1697,28 @@ body.view-cantina .sidebar-filters{max-height:100vh;opacity:1;pointer-events:aut
        Tornando alla home l'insegna e' gia' accesa, senza flicker ne' audio. */
     if(_introDone){
       landing.classList.add("on");
-      if(neon){ neon.classList.remove("ignite"); neon.classList.add("lit"); }
+      if(neon){
+        neon.classList.remove("ignite");
+        var t = neon.querySelector(".tube"), f = neon.querySelector(".off");
+        if(t) t.style.opacity = "";
+        if(f) f.style.opacity = "";
+        neon.classList.add("lit");
+      }
       return;
     }
     landing.classList.remove("on");
-    if(neon) neon.classList.remove("ignite","lit");
+    clearSeq();
+    if(neon){
+      neon.classList.remove("ignite","lit");
+      var _tb = neon.querySelector(".tube"), _of = neon.querySelector(".off");
+      if(_tb) _tb.style.opacity = 0;
+      if(_of) _of.style.opacity = 1;
+    }
     void landing.offsetWidth;
     _t1 = setTimeout(function(){ landing.classList.add("on"); }, 250);
     _t3 = setTimeout(igniteAuto, IGNITE_AT);
   }
-  function stopIntro(){ clearTimeout(_t1); clearTimeout(_t2); clearTimeout(_t3); clearTimeout(_t4); fadeOut(); }
+  function stopIntro(){ clearTimeout(_t1); clearTimeout(_t2); clearTimeout(_t3); clearTimeout(_t4); clearSeq(); fadeOut(); }
   window.pbRunIntro = runIntro;
 
   /* ── navigazione ─────────────────────────────────────────────────── */
