@@ -4,8 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Carta dei Vini — Palinurobar</title>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 <meta name="theme-color" content="#0a0607">
 <meta name="description" content="La carta dei vini del Palinurobar — Via Paisiello 28, Milano. Vini al calice e cantina completa, aggiornati in tempo reale.">
 <link rel="manifest" href="manifest.webmanifest">
@@ -399,7 +397,7 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;color:inhe
   font-weight:500;letter-spacing:.06em;
   text-transform:uppercase;font-size:10px;
 }
-.w-vitigno{font-style:italic;color:rgba(255,255,255,.35)}
+.w-vitigno{font-style:normal;color:rgba(255,255,255,.35)}
 .w-tipo-label{
   font-size:9px;font-weight:500;
   letter-spacing:.1em;text-transform:uppercase;opacity:.85;
@@ -856,7 +854,7 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;color:inhe
 /* 3 · Vitigno */
 .vino-vitigno{
   font-family:var(--font-serif,"Cormorant Garamond",Georgia,serif);
-  font-style:italic; font-size:14px; line-height:1.35;
+  font-style:normal; font-size:14px; line-height:1.35;
   color:rgba(242,233,230,.46);
   margin-top:3px;
 }
@@ -919,11 +917,16 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;color:inhe
 :root{
   --neon:#a80016; --neon-hot:#d1101f; --neon-deep:#4a000b;
   --neon-pink:#a80016; --neon-red:#a80016;
-  --font-display:'Venezia','Inter Tight','Helvetica Neue',sans-serif;
-  --font-sans:'Inter Tight','Helvetica Neue',Arial,sans-serif;
-  --font-serif:'Instrument Serif',Georgia,serif;
+  /* SISTEMA MONOTIPO: una voce sola. La gerarchia nasce da corpo,
+     maiuscole, spaziatura e opacita', mai da un secondo carattere. */
+  --font-display:'Venezia','Helvetica Neue',Helvetica,Arial,sans-serif;
+  --font-sans:'Venezia','Helvetica Neue',Helvetica,Arial,sans-serif;
+  --font-serif:'Venezia','Helvetica Neue',Helvetica,Arial,sans-serif;
 }
-body{font-family:var(--font-sans)}
+body{font-family:var(--font-sans);font-variant-numeric:tabular-nums}
+/* Venezia non ha corsivo: l'obliquo sintetico va disinnescato ovunque */
+body i,body em,.w-vitigno,.w-prod,.w-geo,.vino-prod,.vino-vitigno,.vino-regione,
+.lista-prod,.lista-tipo,.modal-nome,#modal-note-text{font-style:normal}
 
 /* ── NEON (tubo bianco + bloom sanguigno) ───────────────────────────────── */
 .pb-neon{position:relative;display:block}
@@ -1065,14 +1068,19 @@ body.view-landing{overflow:hidden}
 
 /* ── PULSANTE AUDIO (solo se l'autoplay viene bloccato) ─────────────────── */
 .pb-sound{
-  position:absolute;z-index:14;display:none;align-items:center;gap:9px;
+  position:absolute;z-index:14;display:flex;align-items:center;gap:9px;
   border-radius:999px;border:1px solid rgba(255,255,255,.16);
   background:rgba(10,6,7,.62);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
   padding:11px 19px;color:rgba(255,255,255,.62);cursor:pointer;
   font-family:var(--font-sans);font-size:9px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;
   opacity:0;transition:opacity 1.2s ease,border-color .4s,color .4s,box-shadow .4s}
-.pb-landing.needs-sound .pb-sound{display:flex}
-.pb-landing.needs-sound.on .pb-sound{opacity:1;transition-delay:1.4s}
+.pb-landing.on .pb-sound{opacity:1;transition-delay:1.9s}
+/* quando l'autoplay e' bloccato il pulsante si fa notare */
+.pb-landing.needs-sound .pb-sound{border-color:rgba(209,16,31,.65);color:rgba(255,255,255,.86);
+  box-shadow:0 0 18px rgba(168,0,22,.28)}
+.pb-sound:active{transform:scale(.97)}
+.pb-sound-ico{transition:transform .6s cubic-bezier(.16,1,.3,1)}
+.pb-sound:hover .pb-sound-ico{transform:rotate(-180deg)}
 .pb-sound:hover{border-color:rgba(209,16,31,.75);color:#fff;box-shadow:0 0 22px rgba(168,0,22,.3)}
 .pb-sound-ico{font-size:12px;letter-spacing:0;color:var(--neon-hot)}
 @media(min-width:1024px){.pb-sound{right:28px;bottom:28px}}
@@ -1163,10 +1171,10 @@ body.view-cantina .sidebar-filters{max-height:100vh;opacity:1;pointer-events:aut
   letter-spacing:-.01em;color:rgba(255,255,255,.94);line-height:1.25}
 .w-annata{font-family:var(--font-sans);font-size:11.5px;color:rgba(255,255,255,.5);letter-spacing:0}
 .w-meta{font-family:var(--font-serif);font-size:13.5px;color:rgba(255,255,255,.56);gap:6px}
-.w-prod{font-family:var(--font-serif);font-style:italic;font-size:13.5px;font-weight:400;
+.w-prod{font-family:var(--font-serif);font-size:13.5px;font-weight:400;
   letter-spacing:0;text-transform:none;color:rgba(255,255,255,.68)}
-.w-vitigno{font-family:var(--font-serif);font-style:italic;color:rgba(255,255,255,.5)}
-.w-geo{font-family:var(--font-serif);font-style:italic;font-size:13px;
+.w-vitigno{font-family:var(--font-serif);color:rgba(255,255,255,.5)}
+.w-geo{font-family:var(--font-serif);font-size:13px;
   letter-spacing:0;color:rgba(255,255,255,.48)}
 .w-sep{color:rgba(168,0,22,.5)}
 .w-price{font-family:var(--font-sans);font-weight:400;text-shadow:none;color:rgba(255,255,255,.9)}
@@ -1177,9 +1185,9 @@ body.view-cantina .sidebar-filters{max-height:100vh;opacity:1;pointer-events:aut
 .lista-nome{font-family:var(--font-display);font-weight:700;font-size:16px;
   letter-spacing:-.01em;color:rgba(255,255,255,.94)}
 .lista-annata{font-family:var(--font-sans);font-size:11.5px;color:rgba(255,255,255,.5)}
-.lista-prod{font-family:var(--font-serif);font-style:italic;font-size:13.5px;font-weight:400;
+.lista-prod{font-family:var(--font-serif);font-size:13.5px;font-weight:400;
   letter-spacing:0;text-transform:none;color:rgba(255,255,255,.64);margin-top:3px}
-.lista-tipo{font-family:var(--font-serif);font-style:italic;font-size:13px;
+.lista-tipo{font-family:var(--font-serif);font-size:13px;
   letter-spacing:0;text-transform:none;color:rgba(255,255,255,.55)}
 .lista-calice,.lista-bottiglia{font-family:var(--font-sans)}
 .lista-table thead th{font-family:var(--font-sans);color:rgba(209,16,31,.75)}
@@ -1254,43 +1262,45 @@ body.view-cantina .sidebar-filters{max-height:100vh;opacity:1;pointer-events:aut
 .vino-sx{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
 .vino-dx{flex-shrink:0;text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:2px}
 
-/* nome del vino — Venezia Bold */
+/* nome del vino */
 .vino-nome{
-  font-family:var(--font-display);font-weight:700;font-size:17px;letter-spacing:-.012em;
-  color:rgba(255,255,255,.95);line-height:1.25;
-  display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+  font-family:var(--font-display);font-weight:700;font-size:17px;letter-spacing:-.014em;
+  color:rgba(255,255,255,.96);line-height:1.24;
+  display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}
 .vino-annata{
-  font-family:var(--font-sans);font-size:11.5px;font-weight:400;letter-spacing:0;
-  color:rgba(255,255,255,.5);font-variant-numeric:tabular-nums}
+  font-family:var(--font-display);font-weight:700;font-size:12px;letter-spacing:.01em;
+  color:rgba(255,255,255,.44);font-variant-numeric:tabular-nums}
 .vino-formato-badge{
-  font-family:var(--font-sans);font-size:9px;font-weight:600;letter-spacing:.12em;
+  font-family:var(--font-display);font-weight:700;font-size:9px;letter-spacing:.14em;
   text-transform:uppercase;color:var(--neon-hot);
-  border:1px solid rgba(209,16,31,.45);border-radius:999px;padding:1px 7px;line-height:1.5}
+  border:1px solid rgba(209,16,31,.45);border-radius:999px;padding:1px 8px;line-height:1.6}
 
-/* produttore e vitigno — corsivo editoriale */
+/* produttore: maiuscoletto spaziato — secondo livello */
 .vino-prod{
-  font-family:var(--font-serif);font-style:italic;font-weight:400;font-size:14.5px;
-  letter-spacing:0;text-transform:none;color:rgba(255,255,255,.7);line-height:1.35}
-.vino-vitigno{
-  font-family:var(--font-serif);font-style:italic;font-size:13px;
-  color:rgba(255,255,255,.48);line-height:1.35}
+  font-family:var(--font-display);font-weight:700;font-size:12px;
+  letter-spacing:.115em;text-transform:uppercase;color:rgba(255,255,255,.64);
+  line-height:1.5;margin-top:2px}
 
-/* zona / regione / nazione */
-.vino-geo{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;margin-top:1px}
-.vino-regione{
-  font-family:var(--font-serif);font-style:italic;font-size:12.5px;color:rgba(255,255,255,.46)}
-.vino-paese-tag{
-  font-family:var(--font-sans);font-size:9px;font-weight:500;letter-spacing:.16em;
-  text-transform:uppercase;color:rgba(255,255,255,.42)}
-.vino-geo-sep{color:rgba(168,0,22,.55);font-style:normal;user-select:none}
+/* vitigno: terzo livello, caso normale, piu' tenue */
+.vino-vitigno{
+  font-family:var(--font-display);font-weight:700;font-size:11.5px;letter-spacing:.015em;
+  color:rgba(255,255,255,.4);line-height:1.45}
+
+/* geografia: quarto livello, spaziatura massima, opacita' minima */
+.vino-geo{display:flex;align-items:baseline;gap:7px;flex-wrap:wrap;margin-top:2px}
+.vino-regione,.vino-paese-tag{
+  font-family:var(--font-display);font-weight:700;font-size:9.5px;
+  letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.34)}
+.vino-paese-tag{color:rgba(255,255,255,.26)}
+.vino-geo-sep{color:rgba(168,0,22,.6);user-select:none;font-size:9px}
 
 /* prezzi */
 .vino-prezzo{
-  font-family:var(--font-sans);font-size:17px;font-weight:400;letter-spacing:-.01em;
-  font-variant-numeric:tabular-nums;color:rgba(255,255,255,.92);white-space:nowrap}
+  font-family:var(--font-display);font-weight:700;font-size:17px;letter-spacing:-.012em;
+  font-variant-numeric:tabular-nums;color:rgba(255,255,255,.94);white-space:nowrap}
 .vino-bicchiere{
-  font-family:var(--font-sans);font-size:10px;font-weight:500;letter-spacing:.1em;
-  text-transform:uppercase;color:rgba(209,16,31,.9);white-space:nowrap;
+  font-family:var(--font-display);font-weight:700;font-size:9.5px;letter-spacing:.16em;
+  text-transform:uppercase;color:rgba(209,16,31,.92);white-space:nowrap;
   font-variant-numeric:tabular-nums}
 
 /* barretta d'accento per categoria (stessi colori della sidebar) */
@@ -1310,6 +1320,57 @@ body.view-cantina .sidebar-filters{max-height:100vh;opacity:1;pointer-events:aut
 @media(max-width:1023px){
   .vino{padding:14px 12px 14px 16px;gap:12px}
   .vino-nome{font-size:17px}
+}
+
+
+/* ── LISTA AL CALICE — stesso sistema monotipo ──────────────────────────── */
+.lista-nome{font-family:var(--font-display);font-weight:700;font-size:16px;
+  letter-spacing:-.014em;color:rgba(255,255,255,.96)}
+.lista-annata{font-family:var(--font-display);font-weight:700;font-size:11.5px;
+  color:rgba(255,255,255,.44);font-variant-numeric:tabular-nums}
+.lista-prod{font-family:var(--font-display);font-weight:700;font-size:11.5px;
+  letter-spacing:.115em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-top:3px}
+.lista-tipo{font-family:var(--font-display);font-weight:700;font-size:9.5px;
+  letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.36)}
+.lista-calice,.lista-bottiglia{font-family:var(--font-display);font-weight:700;
+  font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.lista-table thead th{font-family:var(--font-display);font-weight:700;font-size:9.5px;
+  letter-spacing:.2em;color:rgba(209,16,31,.8)}
+
+/* micro-UI: stessa voce, corpo minimo, spaziatura massima */
+.pb-meta,.pb-wordmark,.btn-view-sub,.pb-cta .sub,.sb-acc-title,.cat-count,
+.vino-formato-badge,.sezione-titolo,.results-count,.sort-label,.pb-chip,
+.pb-price-chips .lbl,.pb-back,.filter-fab,.drawer-hdr span,.pb-sound{
+  font-family:var(--font-display);font-weight:700}
+.search-input,.search-input::placeholder{font-family:var(--font-display);font-weight:700;letter-spacing:.01em}
+.modal-nome,.modal-annata,.modal-p-val,#modal-note-text{font-family:var(--font-display);font-weight:700}
+#modal-note-text{font-size:12.5px;letter-spacing:.02em;color:rgba(255,255,255,.6)}
+
+/* ── ENTRATA A CASCATA DELLE RIGHE ──────────────────────────────────────── */
+@keyframes pbRowIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.pb-stagger{opacity:0;animation:pbRowIn .85s cubic-bezier(.16,1,.3,1) forwards}
+@media(prefers-reduced-motion:reduce){.pb-stagger{opacity:1;animation:none}}
+
+
+/* ── TITOLO SEZIONE AGGANCIATO IN ALTO ──────────────────────────────────── */
+/* I wrapper introdotti (#view-cantina in flex) non devono creare clipping:
+   position:sticky smette di funzionare se un antenato ha overflow != visible. */
+#view-calice,#view-mescita,#view-cantina,.page-wrap,.main-content,#wine-list,.sezione{
+  overflow:visible}
+.sezione{margin-bottom:26px;position:relative}
+.sezione-titolo{
+  position:sticky;top:0;z-index:30;
+  background:#0a0608;
+  padding:14px 18px 11px;
+  border-bottom:1px solid rgba(168,0,22,.22);
+  box-shadow:0 6px 18px -10px rgba(0,0,0,.9)}
+@media(min-width:1024px){
+  .sezione-titolo{padding:16px 22px 12px;font-size:13px}
+}
+/* il titolo agganciato non deve essere coperto dalla barra di ricerca mobile,
+   che nel foglio base e' sticky a z-index 40 */
+@media(max-width:1023px){
+  .sezione-titolo{top:0;padding:12px 16px 10px}
 }
 
 </style>
@@ -1356,8 +1417,10 @@ body.view-cantina .sidebar-filters{max-height:100vh;opacity:1;pointer-events:aut
       <span class="pb-meta">Est. 2021</span>
     </div>
   </div>
-  <button class="pb-sound" id="pb-sound" type="button" onclick="pbUnlock(event)" aria-label="Attiva l'audio dell'insegna">
-    <span class="pb-sound-ico">&#9834;</span> Attiva l'audio
+  <button class="pb-sound" id="pb-sound" type="button" onclick="pbUnlock(event)"
+          aria-label="Riproduci di nuovo l'accensione dell'insegna">
+    <span class="pb-sound-ico" id="pb-sound-ico">&#8635;</span>
+    <span id="pb-sound-lbl">Riproduci</span>
   </button>
   <div class="pb-grain"></div>
 </div>
@@ -1447,7 +1510,7 @@ body.view-cantina .sidebar-filters{max-height:100vh;opacity:1;pointer-events:aut
     <div class="modal-body" id="modal-body"></div>
     <div id="modal-note-wrap" style="display:none;padding:14px 28px;border-top:1px solid rgba(168,0,22,.12)">
       <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(168,0,22,.6);margin-bottom:6px">Nota del sommelier</div>
-      <div id="modal-note-text" style="font-family:var(--font-serif);font-style:italic;font-size:14px;color:rgba(255,255,255,.65);line-height:1.6"></div>
+      <div id="modal-note-text" style="font-size:13px;letter-spacing:.02em;color:rgba(255,255,255,.62);line-height:1.7"></div>
     </div>
   </div>
 </div>
@@ -1481,15 +1544,13 @@ body.view-cantina .sidebar-filters{max-height:100vh;opacity:1;pointer-events:aut
   var _t1=null,_t2=null,_t3=null,_t4=null,_fade=null;
   var _unlocked = false;      /* true appena il browser ci lascia suonare */
 
+  /* In memoria, non in sessionStorage: cosi' l'accensione riparte a ogni
+     caricamento della pagina, ma NON quando si torna alla home dalle liste. */
   var _introDone = false;
-  try{
-    _unlocked  = sessionStorage.getItem("pb-audio")==="1";
-    _introDone = sessionStorage.getItem("pb-intro")==="1";
-  }catch(e){}
-  function markIntroDone(){
-    _introDone = true;
-    try{ sessionStorage.setItem("pb-intro","1"); }catch(e){}
-  }
+  function markIntroDone(){ _introDone = true; }
+  /* Lo sblocco audio invece resta per tutta la sessione: una volta che il
+     browser ci ha dato il permesso non serve richiederlo. */
+  try{ _unlocked = sessionStorage.getItem("pb-audio")==="1"; }catch(e){}
 
   /* ── audio ───────────────────────────────────────────────────────── */
   function stopFade(){ if(_fade){ clearInterval(_fade); _fade=null; } if(snd) snd.volume=1; }
@@ -1523,7 +1584,17 @@ body.view-cantina .sidebar-filters{max-height:100vh;opacity:1;pointer-events:aut
     try{ sessionStorage.setItem("pb-audio","1"); }catch(e){}
     needsSound(false);
   }
-  function needsSound(v){ if(landing) landing.classList.toggle("needs-sound", !!v); }
+  function needsSound(v){
+    if(landing) landing.classList.toggle("needs-sound", !!v);
+    var ico = document.getElementById("pb-sound-ico");
+    var lbl = document.getElementById("pb-sound-lbl");
+    var btn = document.getElementById("pb-sound");
+    if(ico) ico.innerHTML = v ? "&#9834;" : "&#8635;";
+    if(lbl) lbl.textContent = v ? "Attiva l'audio" : "Riproduci";
+    if(btn) btn.setAttribute("aria-label", v
+      ? "Attiva l'audio dell'insegna"
+      : "Riproduci di nuovo l'accensione dell'insegna");
+  }
 
   /* fade-out morbido invece del taglio netto */
   function fadeOut(){
@@ -1660,6 +1731,32 @@ body.view-cantina .sidebar-filters{max-height:100vh;opacity:1;pointer-events:aut
       clearInterval(iv);
     }
   }, 40);
+
+  /* ── entrata a cascata delle righe ────────────────────────────────
+     Osserva le liste renderizzate da carta.js: nessuna modifica al suo codice.
+     Anima solo le prime righe, il resto compare subito (283 etichette). */
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(!reduce){
+    var MAX = 22, STEP = 26;
+    function stagger(root){
+      var rows = root.querySelectorAll(".vino, .lista-row, .sezione-titolo");
+      for(var i=0;i<rows.length && i<MAX;i++){
+        rows[i].classList.remove("pb-stagger");
+        void rows[i].offsetWidth;
+        rows[i].style.animationDelay = (i*STEP) + "ms";
+        rows[i].classList.add("pb-stagger");
+      }
+    }
+    var mo = new MutationObserver(function(muts){
+      for(var i=0;i<muts.length;i++){
+        if(muts[i].addedNodes.length){ stagger(muts[i].target); break; }
+      }
+    });
+    ["wine-list","calice-list","mescita-list"].forEach(function(id){
+      var el = document.getElementById(id);
+      if(el) mo.observe(el, {childList:true});
+    });
+  }
 
   document.addEventListener("keydown", function(e){
     if(e.key === "Escape" && !document.body.classList.contains("view-landing")){
