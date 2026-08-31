@@ -932,6 +932,7 @@ body i,body em,.w-vitigno,.w-prod,.w-geo,.vino-prod,.vino-vitigno,.vino-regione,
 .pb-neon{position:relative;display:block}
 .pb-neon img{display:block;width:100%;height:auto}
 .pb-neon .tube{
+  position:relative;z-index:2;
   opacity:0;will-change:opacity;transform:translateZ(0);
   filter:
     drop-shadow(0 0 1px #fff)
@@ -941,7 +942,7 @@ body i,body em,.w-vitigno,.w-prod,.w-geo,.vino-prod,.vino-vitigno,.vino-regione,
     drop-shadow(0 0 38px rgba(168,0,22,.5))
     drop-shadow(0 0 66px rgba(74,0,11,.4));
 }
-.pb-neon .off{position:absolute;inset:0;will-change:opacity;filter:brightness(.15) sepia(1) hue-rotate(-30deg) saturate(2.4)}
+.pb-neon .off{position:absolute;inset:0;z-index:1;will-change:opacity;filter:brightness(.15) sepia(1) hue-rotate(-30deg) saturate(2.4)}
 .pb-neon.lit .tube{opacity:1;animation:pbHum 7s ease-in-out infinite}
 .pb-neon.lit .off{opacity:0}
 @keyframes pbHum{0%,100%{opacity:1}31%{opacity:.95}32.4%{opacity:1}67%{opacity:.92}68.6%{opacity:1}}
@@ -1020,11 +1021,12 @@ body.view-landing .filter-fab,body.view-landing .pb-back{display:none!important}
 }
 /* Landing — MOBILE */
 @media(max-width:1023px){
+  /* Due sole ombre: su mobile ogni ridisegno del filtro costa, e con sei
+     livelli il compositore non sta dietro ai passaggi da 20 ms del flicker. */
   .pb-neon .tube{filter:
-    drop-shadow(0 0 1px #fff)
-    drop-shadow(0 0 6px var(--neon-hot))
-    drop-shadow(0 0 16px var(--neon))
-    drop-shadow(0 0 34px rgba(168,0,22,.45))}
+    drop-shadow(0 0 5px var(--neon-hot))
+    drop-shadow(0 0 18px rgba(168,0,22,.55))}
+  .pb-neon .off{filter:brightness(.18) sepia(1) hue-rotate(-30deg) saturate(2.2)}
   .pb-gallery{display:none}
   .pb-landing{background:#0a0607}
   .pb-mob-bg{position:absolute;inset:0;background-size:cover;background-position:50% 42%;
@@ -1396,8 +1398,8 @@ body.view-cantina .sidebar-filters{max-height:100vh;opacity:1;pointer-events:aut
   <div class="pb-panel">
    <div class="pb-core">
     <div class="pb-neon" id="pb-neon">
-      <img class="off" src="assets/logo-neon.png" alt="" width="600" height="599" decoding="async">
-      <img class="tube" src="assets/logo-neon.png" alt="Palinurobar" width="600" height="599" decoding="async">
+      <img class="off" src="assets/logo-neon-320.png" srcset="assets/logo-neon-320.png 320w, assets/logo-neon.png 600w" sizes="(max-width:1023px) 240px, 420px" alt="" width="600" height="599" decoding="async">
+      <img class="tube" src="assets/logo-neon-320.png" srcset="assets/logo-neon-320.png 320w, assets/logo-neon.png 600w" sizes="(max-width:1023px) 240px, 420px" alt="Palinurobar" width="600" height="599" decoding="async">
     </div>
     <div class="pb-tagline pb-rv d2">Your Favourite Whistling Bar</div>
 
@@ -1621,7 +1623,6 @@ body.view-cantina .sidebar-filters{max-height:100vh;opacity:1;pointer-events:aut
       if(!document.body.classList.contains("view-landing")) return;
       if(ev.target && ev.target.closest && ev.target.closest(".pb-cta")) return;
       unbindGesture();
-      clearTimeout(_t4);
       igniteNow();
     };
     document.addEventListener("pointerdown", _gh, true);
@@ -1657,7 +1658,9 @@ body.view-cantina .sidebar-filters{max-height:100vh;opacity:1;pointer-events:aut
     SEQ.forEach(function(s){
       _seqT.push(setTimeout(function(){
         tube.style.opacity = s[1];
-        if(off) off.style.opacity = s[0] >= 1540 ? (s[0] >= 1690 ? 0 : .45) : 1;
+        /* il vetro spento si smorza man mano che il tubo prende: sotto
+           l'insegna non deve mai restare una lastra scura sul pieno acceso */
+        if(off) off.style.opacity = Math.max(0, 1 - s[1]);
       }, s[0]));
     });
     _t2 = setTimeout(function(){
@@ -1671,14 +1674,13 @@ body.view-cantina .sidebar-filters{max-height:100vh;opacity:1;pointer-events:aut
   /* tentativo automatico all'ingresso: se l'audio passa il neon parte in sync,
      altrimenti resta spento in attesa di un gesto — e comunque si accende
      dopo qualche secondo, per non lasciare la pagina morta. */
+  /* Il flicker parte SEMPRE e in orario. L'audio e' un tentativo parallelo:
+     se il browser lo blocca, l'accensione si vede lo stesso e resta il
+     pulsante per riascoltarla col suono. */
   function igniteAuto(){
     markIntroDone();
-    playSound().then(flicker).catch(function(){
-      needsSound(true);
-      bindGesture();
-      /* rete di sicurezza: se nessuno tocca nulla il neon si accende comunque */
-      _t4 = setTimeout(function(){ flicker(); unbindGesture(); }, 3200);
-    });
+    flicker();
+    playSound().catch(function(){ needsSound(true); bindGesture(); });
   }
 
   window.pbUnlock = function(ev){
