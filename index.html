@@ -222,7 +222,7 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;color:inhe
   .wine-col{
     flex:1;height:100vh;overflow-y:auto;min-width:0;
     display:block;
-    background:#0a0608;
+    background:transparent;
     padding:40px 32px 60px;
     box-sizing:border-box;
   }
@@ -231,9 +231,12 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;color:inhe
   .wine-col .page-wrap{
     width:100%;max-width:820px;
     margin:0 auto;
-    background:rgba(10,6,8,.6);
-    box-shadow:0 0 40px rgba(168,0,22,.04);
-    border-radius:0;
+    background:rgba(10,6,8,.52);
+    -webkit-backdrop-filter:blur(16px) saturate(1.1);
+    backdrop-filter:blur(16px) saturate(1.1);
+    border:1px solid rgba(255,255,255,.07);
+    box-shadow:0 18px 60px rgba(0,0,0,.45),0 0 40px rgba(168,0,22,.05);
+    border-radius:24px;
     min-height:calc(100vh - 100px);
     padding-bottom:80px;
     box-sizing:border-box;
@@ -696,8 +699,13 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;color:inhe
 
   /* ── WINE LIST ── */
   body.mobile-list-view .wine-col{padding-top:44px}
-  .wine-col{display:flex;flex-direction:column;min-height:100vh;background:#0a0608}
-  .page-wrap{display:block;width:100%}
+  .wine-col{display:flex;flex-direction:column;min-height:100vh;background:transparent}
+  .page-wrap{display:block;width:calc(100% - 20px);margin:0 10px 18px;
+    background:rgba(10,6,8,.55);
+    -webkit-backdrop-filter:blur(14px) saturate(1.1);
+    backdrop-filter:blur(14px) saturate(1.1);
+    border:1px solid rgba(255,255,255,.07);
+    border-radius:20px;overflow:hidden}
   .sezione{margin-bottom:20px}
   .sezione-titolo{font-size:10px;padding:12px 14px 10px;letter-spacing:.14em}
   .vino{padding:12px 10px 12px 14px;gap:8px}
@@ -968,15 +976,26 @@ body i,body em,.w-vitigno,.w-prod,.w-geo,.vino-prod,.vino-vitigno,.vino-regione,
 /* il tubo: il PNG bianco fa da maschera, il colore lo mette il background */
 .pb-neon .tube{
   position:relative;z-index:1;
-  display:block;width:100%;aspect-ratio:1/1;
-  background:url(assets/logo-neon-acceso.png) center/contain no-repeat;
+  display:block;width:100%;aspect-ratio:600/599;
+  -webkit-mask:var(--m);mask:var(--m);
+  background:linear-gradient(178deg,#d80c22 0%,#a80016 52%,#78000e 100%);
   opacity:0;
+  filter:
+    drop-shadow(0 0 2px rgba(255,150,150,.8))
+    drop-shadow(0 0 7px #c8081e)
+    drop-shadow(0 0 18px #a80016)
+    drop-shadow(0 0 42px rgba(150,0,20,.62))
+    drop-shadow(0 0 82px rgba(100,0,15,.44))
+    drop-shadow(0 0 150px rgba(70,0,10,.28));
   animation:pbIgnite 1.9s steps(1,end) .5s both,
             pbHum 7s ease-in-out 2.4s infinite;
 }
-/* i livelli del vecchio tubo mascherato non servono piu': colore, cuore
-   bianco e alone sono gia' nell'immagine */
-.pb-neon .tube .core,.pb-neon .tube .hot{display:none}
+/* Il gas non e' uniforme: al centro del tratto il vetro e' incandescente e
+   vira al bianco, il colore vive nell'alone. Sfocare un fondo pieno non
+   sfuma nulla: va sfocata la SILHOUETTE, che ha bordi propri. */
+.pb-neon .tube i{position:absolute;inset:0;pointer-events:none;background:var(--m)}
+.pb-neon .tube .core{filter:blur(9px);opacity:.8}
+.pb-neon .tube .hot{filter:blur(3px);opacity:.75}
 /* FILAMENTO — la parte che regge tutto l'effetto.
    Sfocare un fondo uniforme non sfuma niente: un campo costante resta
    costante. Va sfocata la SILHOUETTE, che ha bordi propri. Qui il PNG del
@@ -1098,7 +1117,15 @@ body.view-landing .filter-fab,body.view-landing .pb-back{display:none!important}
 }
 /* Landing — MOBILE */
 @media(max-width:1023px){
-  .pb-neon .tube{filter:none}
+  /* Quattro ombre invece di sei: su mobile ogni ridisegno del filtro costa,
+     e il compositore non sta dietro ai passaggi da 20 ms del flicker. */
+  .pb-neon .tube{filter:
+    drop-shadow(0 0 2px rgba(255,140,140,.8))
+    drop-shadow(0 0 8px #c00a1e)
+    drop-shadow(0 0 20px rgba(160,0,22,.7))
+    drop-shadow(0 0 46px rgba(95,0,14,.48))}
+  .pb-neon .tube .core{filter:blur(5px);opacity:.78}
+  .pb-neon .tube .hot{filter:blur(1.7px);opacity:.72}
   .pb-neon::before{left:-26%;right:-26%;top:-24%;bottom:-24%}
   .pb-gallery{display:none}
   .pb-landing{background:#0a0607}
@@ -1238,7 +1265,14 @@ body.view-landing{overflow:hidden}
 @media(min-width:1024px){
   .sidebar-brand{padding:26px 20px 18px}
   .pb-side-neon{width:150px;margin:0 auto 16px;cursor:pointer}
-  .pb-side-neon .tube{filter:none}
+  .pb-side-neon .tube{filter:
+    drop-shadow(0 0 1px rgba(255,160,160,.9))
+    drop-shadow(0 0 4px #c8081e)
+    drop-shadow(0 0 10px #a80016)
+    drop-shadow(0 0 24px rgba(150,0,20,.55))
+    drop-shadow(0 0 52px rgba(90,0,13,.32))}
+  .pb-side-neon .tube .core{filter:blur(3px);opacity:.8}
+  .pb-side-neon .tube .hot{filter:blur(1.1px);opacity:.78}
   .pb-side-neon::before{left:-24%;right:-24%;top:-22%;bottom:-22%}
   .sidebar-brand .brand-text-name{font-family:var(--font-display);font-weight:700;
     font-size:15px;letter-spacing:-.01em;text-transform:none;color:rgba(255,255,255,.7)}
@@ -1258,6 +1292,28 @@ body.view-landing{overflow:hidden}
     box-shadow:0 0 0 1px rgba(209,16,31,.3),inset 0 0 20px rgba(168,0,22,.28),0 10px 34px rgba(168,0,22,.25);
     text-shadow:0 0 12px rgba(209,16,31,.9),0 0 26px rgba(168,0,22,.5)}
   .btn-view:hover .btn-view-sub,.btn-view.active .btn-view-sub{color:rgba(255,255,255,.6)}
+}
+
+/* ── FONDO FOTOGRAFICO DELLE LISTE ───────────────────────────────────────
+   Fisso al viewport, non alla pagina: con 281 etichette una foto che scorre
+   col testo diventa un caleidoscopio. Ferma, si comporta come una parete.
+   La sfocatura non e' un vezzo: toglie le frequenze alte, che sono quelle
+   che rendono faticosa la lettura di un testo sovrapposto. */
+.pb-list-bg{position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:url(assets/interno-1000.jpg) center 45%/cover no-repeat;
+  filter:blur(2px) saturate(.9) brightness(.62)}
+@media(min-width:1500px),(min-resolution:1.5dppx){
+  .pb-list-bg{background-image:url(assets/interno-1600.jpg)}}
+body.view-landing .pb-list-bg{display:none}
+/* velo: pieno sotto la sidebar, poi sfuma. Nessuno stacco netto. */
+.pb-list-bg::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(10,6,7,.94) 0%,rgba(10,6,7,.8) 22%,rgba(10,6,7,.8) 100%)}
+@media(min-width:1024px){
+  .pb-list-bg::after{background:linear-gradient(90deg,
+    #0a0607 0%,#0a0607 20%,rgba(10,6,7,.86) 34%,rgba(10,6,7,.8) 46%,rgba(10,6,7,.8) 100%)}
+}
+@media(prefers-reduced-transparency:reduce){
+  .pb-list-bg{display:none}
 }
 
 /* ── VISTE ──────────────────────────────────────────────────────────────── */
@@ -1561,6 +1617,8 @@ body.view-calice .lista-table tbody td:nth-child(4){display:none!important}
 
 <button class="pb-back" id="pb-back" type="button" onclick="backToLanding()" aria-label="Torna alla pagina principale"><span class="pb-back-ico">&larr;</span> Home</button>
 
+<div class="pb-list-bg" aria-hidden="true"></div>
+
 <!-- ══════════════════ SIDEBAR DESKTOP ══════════════════ -->
 <div class="sidebar-col">
   <div class="sidebar-brand">
@@ -1786,7 +1844,7 @@ body.view-calice .lista-table tbody td:nth-child(4){display:none!important}
       var all = document.querySelectorAll(".pb-neon");
       for(var i=0;i<all.length;i++) all[i].classList.add("pb-noimg");
     };
-    probe.src = "assets/logo-neon-acceso.png";
+    probe.src = "assets/logo-neon.png";
   })();
 
   function neonOff(){
