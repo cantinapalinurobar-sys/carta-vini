@@ -599,6 +599,7 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;color:inhe
   padding:0 0 10px;border-bottom:1px solid rgba(168,0,22,.15);
   text-align:left;
 }
+.lista-table thead th{white-space:nowrap}
 .lista-table thead th:last-child,.lista-table td:last-child{text-align:right}
 .lista-table td.col-price{text-align:right}
 .lista-row{cursor:pointer;transition:background .12s}
@@ -751,6 +752,8 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;color:inhe
   .results-bar{display:inline-flex;align-items:center;margin:0}
   .results-count{font-family:var(--font-sans);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.2)}
   .main-content{padding:4px 0 80px}
+  .lista-header{padding-left:calc(16px + env(safe-area-inset-left,0px));
+                padding-right:calc(16px + env(safe-area-inset-right,0px))}
   /* le celle partivano dal bordo dello schermo: le lettere con sbalzo
      (P, V, corsivi) sembravano tagliate. Si allineano al titolo di sezione. */
   .lista-table th:first-child,.lista-table td:first-child{
@@ -966,8 +969,7 @@ body i,body em,.w-vitigno,.w-prod,.w-geo,.vino-prod,.vino-vitigno,.vino-regione,
 .pb-neon .tube{
   position:relative;z-index:1;
   display:block;width:100%;aspect-ratio:1/1;
-  background:url(assets/logo-neon-acceso.jpg) center/contain no-repeat;
-  mix-blend-mode:screen;
+  background:url(assets/logo-neon-acceso.png) center/contain no-repeat;
   opacity:0;
   animation:pbIgnite 1.9s steps(1,end) .5s both,
             pbHum 7s ease-in-out 2.4s infinite;
@@ -1086,7 +1088,7 @@ body.view-landing .filter-fab,body.view-landing .pb-back{display:none!important}
   .pb-core{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center}
   .pb-neon{width:min(530px,42vh);margin:0}
   .pb-neon-row{margin:0 auto clamp(10px,2vh,20px)}
-  .pb-tagline{font-size:12.5px;text-align:center;margin-bottom:clamp(22px,6vh,58px)}
+  .pb-tagline{font-size:14px;text-align:center;margin-bottom:clamp(22px,6vh,58px)}
   .pb-ttl{font-size:clamp(30px,4.6vh,40px);text-align:center;margin-bottom:clamp(14px,2.6vh,24px)}
   .pb-ctas{gap:clamp(9px,1.4vh,13px)}
   .pb-cta{padding:clamp(14px,2vh,19px) 26px}
@@ -1102,21 +1104,21 @@ body.view-landing .filter-fab,body.view-landing .pb-back{display:none!important}
   .pb-landing{background:#0a0607}
   .pb-mob-bg{position:absolute;inset:0;background-size:cover;background-position:50% 42%;
     background-image:url(assets/cactus-620.jpg);
-    filter:saturate(.84) brightness(.5) contrast(1.04);animation:pbKb 34s ease-in-out infinite alternate}
+    filter:saturate(.88) brightness(.72) contrast(1.02);animation:pbKb 34s ease-in-out infinite alternate}
   @media(min-resolution:1.5dppx){.pb-mob-bg{background-image:url(assets/cactus-1200.jpg)}}
   .pb-landing::after{content:"";position:absolute;inset:0;z-index:1;
-    background:linear-gradient(180deg,rgba(10,6,7,.62) 0%,rgba(10,6,7,.22) 28%,rgba(10,6,7,.86) 66%,#0a0607 100%)}
+    background:linear-gradient(180deg,rgba(10,6,7,.46) 0%,rgba(10,6,7,.10) 30%,rgba(10,6,7,.70) 68%,rgba(10,6,7,.96) 100%)}
   .pb-panel{position:relative;z-index:5;display:flex;flex-direction:column;height:100%;
     padding:64px 22px calc(30px + env(safe-area-inset-bottom,0px))}
   .pb-core{flex:1;min-height:0;display:flex;flex-direction:column}
-  .pb-gtop{left:22px;top:26px;right:22px;justify-content:space-between;gap:12px}
-  .pb-sound{right:16px;bottom:calc(24px + env(safe-area-inset-bottom,0px))}
+  .pb-gtop{left:22px;top:26px;right:70px;justify-content:flex-start;flex-wrap:wrap;gap:4px 12px}
+  .pb-sound{top:calc(20px + env(safe-area-inset-top,0px));right:16px}
   .pb-neon{width:min(268px,68vw);
            width:min(268px,68vw,max(148px,calc(100vh - 420px)));margin:0}
   @supports(height:100dvh){.pb-neon{width:min(268px,68vw);
            width:min(268px,68vw,max(148px,calc(100dvh - 420px)))}}
   .pb-neon-row{margin:auto auto 18px}
-  .pb-tagline{font-size:10px;text-align:center}
+  .pb-tagline{font-size:12px;text-align:center}
   .pb-block{margin-top:auto}
   .pb-ttl{font-size:34px;text-align:center;margin-bottom:20px}
   .pb-ctas{gap:10px}
@@ -1784,7 +1786,7 @@ body.view-calice .lista-table tbody td:nth-child(4){display:none!important}
       var all = document.querySelectorAll(".pb-neon");
       for(var i=0;i<all.length;i++) all[i].classList.add("pb-noimg");
     };
-    probe.src = "assets/logo-neon-acceso.jpg";
+    probe.src = "assets/logo-neon-acceso.png";
   })();
 
   function neonOff(){
