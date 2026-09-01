@@ -956,8 +956,8 @@ body i,body em,.w-vitigno,.w-prod,.w-geo,.vino-prod,.vino-vitigno,.vino-regione,
   left:-42%;right:-42%;top:-38%;bottom:-38%;z-index:0;pointer-events:none;
   opacity:0;
   background:radial-gradient(closest-side,
-    rgba(226,20,42,.42) 0%,rgba(178,0,26,.24) 34%,rgba(110,0,17,.12) 58%,
-    rgba(60,0,10,.05) 74%,transparent 86%);
+    rgba(200,10,32,.44) 0%,rgba(160,0,22,.26) 34%,rgba(100,0,15,.13) 58%,
+    rgba(55,0,9,.05) 74%,transparent 86%);
   animation:pbIgnite 1.9s steps(1,end) .5s both}
 .pb-neon.replay::before{animation:pbIgnite 1.9s steps(1,end) 0s both}
 .pb-neon.dark::before{animation:none;opacity:0}
@@ -967,15 +967,15 @@ body i,body em,.w-vitigno,.w-prod,.w-geo,.vino-prod,.vino-vitigno,.vino-regione,
   position:relative;z-index:1;
   display:block;width:100%;aspect-ratio:600/599;
   -webkit-mask:var(--m);mask:var(--m);
-  background:linear-gradient(178deg,#ff1f2e 0%,#e2081f 50%,#c0021e 100%);
+  background:linear-gradient(178deg,#d80c22 0%,#a80016 52%,#78000e 100%);
   opacity:0;
   filter:
-    drop-shadow(0 0 2px rgba(255,190,185,.85))
-    drop-shadow(0 0 7px #ff2a38)
-    drop-shadow(0 0 18px #d20a24)
-    drop-shadow(0 0 42px rgba(180,0,25,.62))
-    drop-shadow(0 0 82px rgba(120,0,18,.42))
-    drop-shadow(0 0 150px rgba(80,0,12,.26));
+    drop-shadow(0 0 2px rgba(255,150,150,.8))
+    drop-shadow(0 0 7px #c8081e)
+    drop-shadow(0 0 18px #a80016)
+    drop-shadow(0 0 42px rgba(150,0,20,.62))
+    drop-shadow(0 0 82px rgba(100,0,15,.44))
+    drop-shadow(0 0 150px rgba(70,0,10,.28));
   animation:pbIgnite 1.9s steps(1,end) .5s both,
             pbHum 7s ease-in-out 2.4s infinite;
 }
@@ -1010,6 +1010,11 @@ body i,body em,.w-vitigno,.w-prod,.w-geo,.vino-prod,.vino-vitigno,.vino-regione,
 73.2%{opacity:0}   81.1%{opacity:.95} 87.4%{opacity:.35}
 89%{opacity:1}     100%{opacity:1}}
 @keyframes pbHum{0%,100%{opacity:1}31%{opacity:.95}32.4%{opacity:1}67%{opacity:.92}68.6%{opacity:1}}
+
+/* SEMPRE ACCESA — stessa insegna, senza scarica d'ingresso.
+   Serve nella sidebar, dove il logo non e' un evento ma un elemento fisso. */
+.pb-neon.lit .tube{opacity:1;animation:pbHum 7s ease-in-out infinite}
+.pb-neon.lit::before{opacity:1;animation:none}
 
 /* fallback se il PNG non carica: testo al neon al suo posto */
 .pb-neon.pb-noimg::after{content:"Palinurobar";position:absolute;inset:0;
@@ -1083,14 +1088,19 @@ body.view-landing .filter-fab,body.view-landing .pb-back{display:none!important}
     background:linear-gradient(180deg,transparent,rgba(168,0,22,.28),transparent)}
   /* blocco centrale elastico: si comprime prima di toccare il footer */
   .pb-core{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center}
-  .pb-neon{width:min(530px,55vh);margin:0}
+  /* L'insegna e' quadrata: la sua altezza NASCE dalla larghezza, quindi
+     flex-shrink non la tocca e su viewport bassi sfonda il footer. Va quindi
+     limitata a quanto avanza davvero: 470px e' lo spazio occupato da padding,
+     tagline, titolo, due CTA e footer alla loro misura massima. */
+  .pb-neon{width:min(530px,100%,max(170px,calc(100vh - 470px)));margin:0}
   .pb-neon-row{margin:0 auto clamp(10px,2vh,20px)}
   .pb-tagline{font-size:12.5px;text-align:center;margin-bottom:clamp(22px,6vh,58px)}
   .pb-ttl{font-size:clamp(30px,4.6vh,40px);text-align:center;margin-bottom:clamp(14px,2.6vh,24px)}
   .pb-ctas{gap:clamp(9px,1.4vh,13px)}
   .pb-cta{padding:clamp(14px,2vh,19px) 26px}
   .pb-foot{flex-shrink:0;display:flex;justify-content:space-between;align-items:center;gap:16px;
-    padding-top:clamp(14px,2.2vh,20px);border-top:1px solid rgba(255,255,255,.07)}
+    padding-top:clamp(14px,2.2vh,20px);border-top:1px solid rgba(255,255,255,.07);
+    position:relative;z-index:2;background:#0a0607}
   .pb-mob-bg{display:none}
 }
 /* Landing — MOBILE */
@@ -1098,10 +1108,10 @@ body.view-landing .filter-fab,body.view-landing .pb-back{display:none!important}
   /* Due sole ombre: su mobile ogni ridisegno del filtro costa, e con sei
      livelli il compositore non sta dietro ai passaggi da 20 ms del flicker. */
   .pb-neon .tube{filter:
-    drop-shadow(0 0 2px #ff6b70)
-    drop-shadow(0 0 8px #e00a22)
-    drop-shadow(0 0 20px rgba(190,0,26,.7))
-    drop-shadow(0 0 46px rgba(110,0,17,.45))}
+    drop-shadow(0 0 2px rgba(255,140,140,.8))
+    drop-shadow(0 0 8px #c00a1e)
+    drop-shadow(0 0 20px rgba(160,0,22,.7))
+    drop-shadow(0 0 46px rgba(95,0,14,.48))}
   /* il logo e' circa la meta': le sfocature scalano con lui */
   .pb-neon .tube .core{filter:blur(5px);opacity:.78}
   .pb-neon .tube .hot{filter:blur(1.7px);opacity:.72}
@@ -1118,7 +1128,8 @@ body.view-landing .filter-fab,body.view-landing .pb-back{display:none!important}
     padding:64px 22px calc(30px + env(safe-area-inset-bottom,0px))}
   .pb-core{flex:1;min-height:0;display:flex;flex-direction:column}
   .pb-gtop{left:22px;top:26px;right:22px;justify-content:space-between;gap:12px}
-  .pb-neon{width:min(268px,68vw);margin:0}
+  .pb-neon{width:min(268px,68vw,max(148px,calc(100vh - 420px)));margin:0}
+  @supports(height:100dvh){.pb-neon{width:min(268px,68vw,max(148px,calc(100dvh - 420px)))}}
   .pb-neon-row{margin:auto auto 18px}
   .pb-tagline{font-size:10px;text-align:center}
   .pb-block{margin-top:auto}
@@ -1126,11 +1137,13 @@ body.view-landing .filter-fab,body.view-landing .pb-back{display:none!important}
   .pb-ctas{gap:10px}
   .pb-cta{border-radius:24px;padding:16px 20px}
   .pb-cta .lbl{font-size:18px}
-  .pb-foot{text-align:center;margin-top:18px;line-height:1.75}
+  .pb-foot{text-align:center;margin-top:18px;line-height:1.75;
+    position:relative;z-index:2;background:#0a0607}
   body.view-landing #sb-status{opacity:.55}
 }
 @media(max-width:1023px) and (max-height:620px){
-  .pb-neon{width:min(232px,60vw);margin:0}
+  .pb-neon{width:min(232px,60vw,max(140px,calc(100vh - 372px)));margin:0}
+  @supports(height:100dvh){.pb-neon{width:min(232px,60vw,max(140px,calc(100dvh - 372px)))}}
   .pb-neon-row{margin:auto auto 12px}
   .pb-ttl{font-size:28px;margin-bottom:14px}
   .pb-panel{padding-top:46px}
@@ -1138,7 +1151,8 @@ body.view-landing .filter-fab,body.view-landing .pb-back{display:none!important}
 /* iPhone in verticale con le barre di Safari: ~640-700px di viewport.
    Prima cadeva nel layout compatto e l'insegna si rimpiccioliva. */
 @media(max-width:1023px) and (min-height:621px) and (max-height:720px){
-  .pb-neon{width:min(250px,64vw)}
+  .pb-neon{width:min(250px,64vw,max(144px,calc(100vh - 400px)))}
+  @supports(height:100dvh){.pb-neon{width:min(250px,64vw,max(144px,calc(100dvh - 400px)))}}
   .pb-panel{padding-top:56px}
 }
 
@@ -1230,10 +1244,24 @@ body.view-landing{overflow:hidden}
 /* ── SIDEBAR DESKTOP ────────────────────────────────────────────────────── */
 @media(min-width:1024px){
   .sidebar-brand{padding:26px 20px 18px}
-  .pb-side-neon{width:150px;margin:0 auto 16px;display:block;cursor:pointer;transition:filter .5s;
-    filter:drop-shadow(0 0 1px #fff) drop-shadow(0 0 3px rgba(255,214,214,.85))
-           drop-shadow(0 0 7px var(--neon-hot)) drop-shadow(0 0 15px var(--neon))
-           drop-shadow(0 0 30px rgba(168,0,22,.38))}
+  .pb-side-neon{width:150px;margin:0 auto 16px;cursor:pointer}
+  .pb-side-neon .tube{filter:
+    drop-shadow(0 0 1px rgba(255,160,160,.9))
+    drop-shadow(0 0 4px #c8081e)
+    drop-shadow(0 0 10px #a80016)
+    drop-shadow(0 0 24px rgba(150,0,20,.55))
+    drop-shadow(0 0 52px rgba(90,0,13,.32));
+    transition:filter .5s}
+  .pb-side-neon .tube .core{filter:blur(3px);opacity:.8}
+  .pb-side-neon .tube .hot{filter:blur(1.1px);opacity:.78}
+  .pb-side-neon::before{left:-24%;right:-24%;top:-22%;bottom:-22%}
+  .pb-side-neon:hover .tube{filter:
+    drop-shadow(0 0 1px #fff)
+    drop-shadow(0 0 5px #e00c24)
+    drop-shadow(0 0 14px #c00019)
+    drop-shadow(0 0 32px rgba(170,0,23,.62))
+    drop-shadow(0 0 66px rgba(105,0,15,.38))}
+  .pb-side-neon:focus-visible{outline:2px solid var(--neon-hot);outline-offset:4px;border-radius:6px}
   .sidebar-brand .brand-text-name{font-family:var(--font-display);font-weight:700;
     font-size:15px;letter-spacing:-.01em;text-transform:none;color:rgba(255,255,255,.7)}
   .brand-sep{margin-bottom:12px}
@@ -1561,7 +1589,10 @@ body.view-calice .lista-table tbody td:nth-child(4){display:none!important}
 <!-- ══════════════════ SIDEBAR DESKTOP ══════════════════ -->
 <div class="sidebar-col">
   <div class="sidebar-brand">
-    <img class="pb-side-neon" src="assets/logo-neon.png" alt="Palinurobar" width="150" height="150" onclick="backToLanding()" title="Torna alla home">
+    <div class="pb-neon lit pb-side-neon" role="button" tabindex="0" aria-label="Palinurobar — torna alla home"
+         title="Torna alla home" onclick="backToLanding()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();backToLanding()}">
+      <span class="tube"><i class="core"></i><i class="hot"></i></span>
+    </div>
     <div class="brand-sep"></div>
     <div class="brand-text-name">Carta dei Vini</div>
   </div>
@@ -1775,9 +1806,11 @@ body.view-calice .lista-table tbody td:nth-child(4){display:none!important}
   /* fallback leggibile se il PNG del logo non arriva: la maschera non emette
      eventi, quindi il file si verifica a parte */
   (function(){
-    if(!neon) return;
     var probe = new Image();
-    probe.onerror = function(){ neon.classList.add("pb-noimg"); };
+    probe.onerror = function(){
+      var all = document.querySelectorAll(".pb-neon");
+      for(var i=0;i<all.length;i++) all[i].classList.add("pb-noimg");
+    };
     probe.src = "assets/logo-neon.png";
   })();
 
