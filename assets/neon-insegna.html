@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Insegna neon — Palinurobar</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:transparent}
+body{display:flex;align-items:center;justify-content:center;
+  font:400 11px/1.6 "Helvetica Neue",Arial,sans-serif}
+
+.pb-neon{position:relative;display:block;min-width:120px;
+  width:var(--w,min(420px,74vmin));cursor:pointer;
+  -webkit-tap-highlight-color:transparent}
+
+/* alone sul muro: sta fuori dall'immagine, quindi vive sul contenitore e
+   segue la scarica insieme al tubo */
+.pb-neon::before{content:"";position:absolute;
+  left:-38%;right:-38%;top:-34%;bottom:-34%;z-index:0;pointer-events:none;
+  opacity:0;
+  background:radial-gradient(closest-side,
+    rgba(200,10,32,.34) 0%,rgba(160,0,22,.20) 34%,rgba(100,0,15,.10) 58%,
+    rgba(55,0,9,.04) 74%,transparent 86%)}
+
+.pb-neon .tube{position:relative;z-index:1;display:block;width:100%;aspect-ratio:1/1;
+  background:url(assets/logo-neon-acceso.png) center/contain no-repeat;
+  opacity:0}
+
+.pb-neon.on .tube{animation:pbIgnite 1.9s steps(1,end) both,
+                  pbHum 7s ease-in-out 1.9s infinite}
+.pb-neon.on::before{animation:pbIgnite 1.9s steps(1,end) both}
+
+/* la scarica: gradini netti, mai dissolvenze. Sono gli stessi diciassette
+   fotogrammi dell'audio, quindi i due restano allineati da soli. */
+@keyframes pbIgnite{
+0%{opacity:0}      1%{opacity:1}      3.7%{opacity:0}    6.8%{opacity:.55}
+12.1%{opacity:0}   15.3%{opacity:.45} 24.7%{opacity:0}   33.2%{opacity:.75}
+45.8%{opacity:0}   49.5%{opacity:.6}  61.1%{opacity:0}   65.3%{opacity:.85}
+73.2%{opacity:0}   81.1%{opacity:.95} 87.4%{opacity:.35}
+89%{opacity:1}     100%{opacity:1}}
+@keyframes pbHum{0%,100%{opacity:1}31%{opacity:.95}32.4%{opacity:1}67%{opacity:.92}68.6%{opacity:1}}
+
+.hint{position:fixed;left:0;right:0;bottom:16px;text-align:center;
+  color:rgba(255,255,255,.3);letter-spacing:.18em;text-transform:uppercase;
+  transition:opacity .6s}
+.hint.gone{opacity:0}
+</style>
+</head>
+<body>
+
+<div class="pb-neon" id="sign" role="button" tabindex="0"
+     aria-label="Accendi l'insegna" title="Accendi l'insegna">
+  <span class="tube"></span>
+</div>
+
+<p class="hint" id="hint">Tocca per accendere</p>
+<audio id="snd" preload="auto" playsinline src="assets/neon.mp3"></audio>
+
+<script>
+(function(){
+  var sign=document.getElementById("sign"),snd=document.getElementById("snd"),
+      hint=document.getElementById("hint");
+
+  function ignite(){
+    hint.classList.add("gone");
+    sign.classList.remove("on");
+    void sign.offsetWidth;              /* riavvio pulito dell'animazione */
+    sign.classList.add("on");
+    if(!snd) return;
+    try{ snd.currentTime=0; }catch(e){}
+    snd.muted=false;
+    var p=snd.play();
+    if(p&&p.catch) p.catch(function(){});   /* niente audio: la luce parte comunque */
+  }
+
+  sign.addEventListener("click",ignite);
+  sign.addEventListener("keydown",function(e){
+    if(e.key==="Enter"||e.key===" "){ e.preventDefault(); ignite(); }
+  });
+
+  /* Tentativo all'avvio: se il browser concede l'autoplay parte da sola,
+     altrimenti resta spenta e aspetta il gesto. Non si forza il muto:
+     un'accensione senza il suo suono vale meno di un'attesa. */
+  window.addEventListener("load",function(){
+    var t=snd?snd.play():null;
+    if(t&&t.then) t.then(function(){ snd.pause(); ignite(); }).catch(function(){});
+  });
+})();
+</script>
+</body>
+</html>
