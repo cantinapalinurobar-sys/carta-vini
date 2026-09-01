@@ -1074,13 +1074,14 @@ body.view-landing .filter-fab,body.view-landing .pb-back{display:none!important}
   .pb-g1{background-position:12% center;background-image:url(assets/bar-1000.jpg)}
   @media(min-width:1500px),(min-resolution:1.5dppx){.pb-g1{background-image:url(assets/bar-1600.jpg)}}
   .pb-gallery::after{content:"";position:absolute;inset:0;
-    background:linear-gradient(100deg,rgba(10,6,7,.38) 0%,rgba(10,6,7,.04) 42%,rgba(10,6,7,.9) 100%)}
+    background:
+      linear-gradient(90deg,transparent 46%,rgba(10,6,7,.35) 68%,rgba(10,6,7,.82) 88%,#0a0607 100%),
+      linear-gradient(100deg,rgba(10,6,7,.38) 0%,rgba(10,6,7,.04) 42%,rgba(10,6,7,.6) 100%)}
   .pb-gtop{left:52px;top:46px}
+  .pb-sound{top:26px;right:26px}
   .pb-panel{position:relative;background:#0a0607;z-index:5;
     display:flex;flex-direction:column;height:100%;overflow:hidden;
     padding:clamp(28px,5vh,54px) 74px clamp(22px,3.4vh,34px)}
-  .pb-panel::before{content:"";position:absolute;left:0;top:0;bottom:0;width:1px;
-    background:linear-gradient(180deg,transparent,rgba(168,0,22,.28),transparent)}
   /* blocco centrale elastico: si comprime prima di toccare il footer */
   .pb-core{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center}
   .pb-neon{width:min(530px,42vh);margin:0}
@@ -1109,6 +1110,7 @@ body.view-landing .filter-fab,body.view-landing .pb-back{display:none!important}
     padding:64px 22px calc(30px + env(safe-area-inset-bottom,0px))}
   .pb-core{flex:1;min-height:0;display:flex;flex-direction:column}
   .pb-gtop{left:22px;top:26px;right:22px;justify-content:space-between;gap:12px}
+  .pb-sound{right:16px;bottom:calc(24px + env(safe-area-inset-bottom,0px))}
   .pb-neon{width:min(268px,68vw);
            width:min(268px,68vw,max(148px,calc(100vh - 420px)));margin:0}
   @supports(height:100dvh){.pb-neon{width:min(268px,68vw);
@@ -1142,12 +1144,21 @@ body.view-landing{overflow:hidden}
   body:not(.view-landing) .page-wrap{padding-top:4px}
 }
 
-/* ── INTERRUTTORE INSEGNA (a lato del neon, I=acceso / O=spento) ────────── */
-.pb-neon-row{display:flex;align-items:center;justify-content:center;
-  gap:clamp(14px,2vw,30px)}
-.pb-sound{flex:none;background:none;border:0;padding:0;cursor:pointer;
-  display:flex;flex-direction:column;align-items:center;gap:8px;
-  opacity:0;transition:opacity 1.2s ease}
+/* ── AUDIO INSEGNA ───────────────────────────────────────────────────────
+   Fuori dal flusso: se stesse accanto al neon lo spingerebbe fuori asse. */
+.pb-neon-row{display:flex;align-items:center;justify-content:center}
+.pb-sound{position:absolute;z-index:9;
+  width:34px;height:34px;border-radius:50%;padding:0;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid rgba(255,255,255,.13);background:rgba(255,255,255,.035);
+  color:rgba(255,255,255,.42);
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+  opacity:0;transition:opacity 1.2s ease,color .4s,border-color .4s,box-shadow .4s}
+.pb-sound-ico{font-size:14px;line-height:1}
+.pb-sound:hover{color:rgba(255,255,255,.9);border-color:rgba(209,16,31,.6)}
+.pb-landing.sw-on .pb-sound{color:#fff;border-color:rgba(209,16,31,.7);
+  box-shadow:0 0 14px rgba(168,0,22,.32)}
+.pb-sound:focus-visible{outline:2px solid var(--neon-hot);outline-offset:3px}
 .pb-landing.on .pb-sound{opacity:1;transition-delay:1.9s}
 .pb-sound #pb-sound-lbl{position:absolute;width:1px;height:1px;margin:-1px;
   overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
@@ -1516,12 +1527,9 @@ body.view-calice .lista-table tbody td:nth-child(4){display:none!important}
         <span class="tube"><i class="core"></i><i class="hot"></i></span>
       </div>
       <button class="pb-sound" id="pb-sound" type="button" onclick="pbToggle(event)"
-              role="switch" aria-checked="false" aria-label="Accendi o spegni l'insegna">
-        <span class="pb-sw" aria-hidden="true">
-          <span class="lev"><span class="mk on">I</span><span class="mk off">O</span></span>
-        </span>
-        <span id="pb-sound-lbl">Accendi l'insegna</span>
-        <span class="pb-sound-ico" id="pb-sound-ico" hidden>&#8635;</span>
+              role="switch" aria-checked="false" aria-label="Audio dell'insegna">
+        <span class="pb-sound-ico" id="pb-sound-ico" aria-hidden="true">&#9834;</span>
+        <span id="pb-sound-lbl">Audio dell'insegna</span>
       </button>
     </div>
     <div class="pb-tagline pb-rv d2">Your Favourite Whistling Bar</div>
@@ -1716,7 +1724,7 @@ body.view-calice .lista-table tbody td:nth-child(4){display:none!important}
     var ico = document.getElementById("pb-sound-ico");
     var lbl = document.getElementById("pb-sound-lbl");
     var btn = document.getElementById("pb-sound");
-    if(ico) ico.innerHTML = v ? "&#9834;" : "&#8635;";
+    if(ico) ico.innerHTML = "&#9834;";
     if(lbl) lbl.textContent = v ? "Attiva l'audio dell'insegna" : "Accendi o spegni l'insegna";
     if(btn) btn.setAttribute("aria-label", v
       ? "Attiva l'audio dell'insegna"
