@@ -20,9 +20,9 @@
   /* ── PALETTE NEON PALINUROBAR ── */
   --neon-red:#F2E6D0;
   --neon-pink:#F2E6D0;
-  --neon-glow:rgba(242,230,208,.30);
-  --neon-glow-soft:rgba(242,230,208,.12);
-  --neon-white:#FFF8EC;
+  --neon-glow:rgba(242,230,208,.45);
+  --neon-glow-soft:rgba(242,230,208,.18);
+  --neon-white:#fff;
   --bg-dark:#0A0806;
   --bg-dark2:#0F0B08;
   --surface:#140F0A;
@@ -102,17 +102,6 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;color:inhe
     display:flex;flex-direction:column;align-items:center;
     padding:32px 20px 24px;
     gap:0;
-  }
-  .brand-logo-neon{
-    width:460px;max-width:100%;height:auto;
-    display:block;
-    margin-bottom:22px;
-    filter:
-      drop-shadow(0 0 4px rgba(242,230,208,1))
-      drop-shadow(0 0 14px rgba(242,230,208,.85))
-      drop-shadow(0 0 30px var(--neon-pink))
-      drop-shadow(0 0 60px var(--neon-pink))
-      drop-shadow(0 0 100px rgba(242,230,208,.3));
   }
   .brand-logo2{
     width:210px;max-width:100%;height:auto;
@@ -214,11 +203,7 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;color:inhe
   .wine-col{
     flex:1;height:100vh;overflow-y:auto;min-width:0;
     display:block;
-    /* la vetrata sulla via resta ferma mentre la lista scorre */
-    background:
-      linear-gradient(180deg,rgba(10,8,6,.55) 0%,rgba(10,8,6,.68) 45%,rgba(10,8,6,.78) 100%),
-      url(assets/interno-1600.jpg) center/cover no-repeat fixed,
-      #0A0806;
+    background:transparent;
     padding:40px 32px 60px;
     box-sizing:border-box;
   }
@@ -227,11 +212,12 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;color:inhe
   .wine-col .page-wrap{
     width:100%;max-width:820px;
     margin:0 auto;
-    /* smerigliatura forte: sotto passa anche il cielo bianco della vetrata */
-    background:rgba(10,8,6,.62);
-    -webkit-backdrop-filter:blur(26px) saturate(1.1);backdrop-filter:blur(26px) saturate(1.1);
-    box-shadow:none;
-    border-radius:0;
+    background:rgba(10,8,6,.52);
+    -webkit-backdrop-filter:blur(16px) saturate(1.1);
+    backdrop-filter:blur(16px) saturate(1.1);
+    border:1px solid rgba(242,230,208,.07);
+    box-shadow:0 18px 60px rgba(0,0,0,.45);
+    border-radius:24px;
     min-height:calc(100vh - 100px);
     padding-bottom:80px;
     box-sizing:border-box;
@@ -297,7 +283,7 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;color:inhe
 }
 .cat-item:last-child{border-bottom:none}
 .cat-item:hover{opacity:.7}
-.cat-item.active .cat-label{color:var(--neon-white);font-weight:700}
+.cat-item.active .cat-label{color:rgba(242,230,208,.95);font-weight:500;text-shadow:none}
 .cat-item.active .cat-count{color:rgba(242,230,208,.6)}
 .cat-item.cat-empty{opacity:.2;pointer-events:none}
 .cat-dot{width:5px;height:5px;border-radius:50%;background:rgba(242,230,208,.3);flex-shrink:0}
@@ -312,7 +298,7 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;color:inhe
 }
 .sb-filter-item:last-child{border-bottom:none}
 .sb-filter-item:hover{color:rgba(242,230,208,.9)}
-.sb-filter-item.active{color:var(--neon-white);font-weight:700}
+.sb-filter-item.active{color:var(--neon-white);font-weight:500;text-shadow:none}
 .dual-range-wrap{position:relative;height:32px;margin:4px 10px 0}
 .dual-range-track{position:absolute;top:50%;transform:translateY(-50%);left:0;right:0;height:2px;background:rgba(242,230,208,.15);border-radius:2px}
 .dual-range-fill{position:absolute;top:50%;transform:translateY(-50%);height:2px;background:var(--neon-pink);border-radius:2px;box-shadow:none}
@@ -328,7 +314,6 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;color:inhe
 }
 .btn-reset-all:hover{color:var(--neon-pink);text-shadow:none}
 .sort-bar{display:none}
-.sort-bar select{display:none}
 .sort-label{font-family:var(--font-sans);font-size:9px;font-weight:400;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
 .sort-select{
   border:1px solid rgba(242,230,208,.2);border-radius:0;
@@ -578,7 +563,7 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;color:inhe
 
 /* ── STATUS ── */
 #sb-status{
-  position:fixed;bottom:12px;right:14px;z-index:200;
+  position:fixed;bottom:calc(12px + env(safe-area-inset-bottom,0px));right:14px;z-index:200;
   display:flex;align-items:center;gap:5px;
   font-family:var(--font-sans);font-size:9px;letter-spacing:.1em;text-transform:uppercase;
   color:rgba(242,230,208,.2);
@@ -598,6 +583,7 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;color:inhe
   padding:0 0 10px;border-bottom:1px solid rgba(242,230,208,.15);
   text-align:left;
 }
+.lista-table thead th{white-space:nowrap}
 .lista-table thead th:last-child,.lista-table td:last-child{text-align:right}
 .lista-table td.col-price{text-align:right}
 .lista-row{cursor:pointer;transition:background .12s}
@@ -629,16 +615,6 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;color:inhe
   .mobile-landing.hidden{display:none!important}
   .mobile-landing.is-leaving{opacity:0;transform:translateY(-8px);pointer-events:none}
 
-  .mobile-landing-logo-neon{
-    max-width:580px;width:92%;height:auto;
-    margin-bottom:20px;
-    filter:
-      drop-shadow(0 0 4px rgba(242,230,208,1))
-      drop-shadow(0 0 14px rgba(242,230,208,.85))
-      drop-shadow(0 0 30px var(--neon-pink))
-      drop-shadow(0 0 60px var(--neon-pink))
-      drop-shadow(0 0 100px rgba(242,230,208,.3));
-  }
   .mobile-brand-logo2{
     max-width:230px;width:72%;height:auto;
     display:block;
@@ -684,32 +660,25 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;color:inhe
   .btn-back-mobile{
     display:flex!important;align-items:center;gap:8px;
     position:fixed;top:0;left:0;right:0;z-index:49;
-    background:rgba(10,8,6,.55);color:rgba(242,230,208,.6);
-    -webkit-backdrop-filter:blur(18px) saturate(1.15);backdrop-filter:blur(18px) saturate(1.15);
+    background:#0A0806;color:rgba(242,230,208,.5);
     padding:14px 18px;
     font-family:var(--font-sans);font-size:9px;font-weight:400;
     letter-spacing:.14em;text-transform:uppercase;
-    border:none;cursor:pointer;
+    border:none;border-bottom:1px solid rgba(242,230,208,.1);cursor:pointer;
   }
   .btn-back-mobile::before{content:"←";font-size:14px;opacity:.6;margin-right:2px;font-weight:300;letter-spacing:0}
 
   /* ── WINE LIST ── */
   body.mobile-list-view .wine-col{padding-top:44px}
-  /* la foto del locale resta visibile sotto le liste: niente lastra nera */
-  .wine-col{display:flex;flex-direction:column;min-height:100vh;background:transparent;
-    position:relative;z-index:1}
-  body:not(.view-landing)::before{content:"";position:fixed;inset:0;z-index:-2;
-    background:url(assets/cactus-620.jpg) 50% 42%/cover no-repeat;
-    filter:saturate(1.04) brightness(.76) sepia(.08) contrast(1.02)}
-  body:not(.view-landing)::after{content:"";position:fixed;inset:0;z-index:-1;
-    background:linear-gradient(180deg,rgba(10,8,6,.30) 0%,rgba(10,8,6,.44) 22%,
-      rgba(10,8,6,.56) 48%,rgba(10,8,6,.66) 74%,rgba(10,8,6,.72) 100%)}
-  @media(min-resolution:1.5dppx){body:not(.view-landing)::before{background-image:url(assets/cactus-1200.jpg)}}
-  .page-wrap,.main-content{background:transparent}
-  #wine-list,#calice-list,#mescita-list{background:transparent}
-  .page-wrap{display:block;width:100%}
+  .wine-col{display:flex;flex-direction:column;min-height:100vh;background:transparent}
+  .page-wrap{display:block;width:calc(100% - 20px);margin:0 10px 18px;
+    background:rgba(10,8,6,.55);
+    -webkit-backdrop-filter:blur(14px) saturate(1.1);
+    backdrop-filter:blur(14px) saturate(1.1);
+    border:1px solid rgba(242,230,208,.07);
+    border-radius:20px;overflow:hidden}
   .sezione{margin-bottom:20px}
-  .sezione-titolo{font-size:15.5px;padding:20px 14px 9px;letter-spacing:.14em}
+  .sezione-titolo{font-size:15.5px;padding:18px 14px 9px;letter-spacing:.14em}
   .vino{padding:12px 10px 12px 14px;gap:8px}
   .w-body{padding-left:10px}
   .modal-overlay{padding:0;align-items:flex-end;backdrop-filter:none}
@@ -720,13 +689,11 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;color:inhe
 
   /* ── HEADER STICKY ── */
   .search-bar-wrap,
+  #sort-bar-wrap,
   .main-content>.results-bar{
     position:sticky;z-index:40;
-    background:rgba(10,8,6,.42);
-    -webkit-backdrop-filter:blur(18px) saturate(1.15);backdrop-filter:blur(18px) saturate(1.15);
+    background:#0A0806;
   }
-  /* la sort-bar e' assorbita da Filtri: niente banda, niente filetto */
-  #sort-bar-wrap{display:none}
   .search-bar-wrap{
     top:44px;
     padding:10px 14px 6px;
@@ -734,27 +701,46 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;color:inhe
     border-top:none;
   }
   .search-bar-inner{position:relative}
+  /* al buio il campo deve leggersi come un campo, non come uno sfondo */
   .search-bar-wrap .search-input{
     width:100%;
-    padding:10px 36px 10px 14px;
-    border:1px solid rgba(242,230,208,.15);
+    padding:12px 38px 12px 16px;
+    border:1px solid rgba(242,230,208,.26);
     border-radius:999px;
     padding-left:18px;
-    background:rgba(10,8,6,.4);color:rgba(242,230,208,.85);
-    -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
-    font-family:var(--font-sans);font-size:14px;
+    background:rgba(242,230,208,.09);color:var(--neon-white);
+    font-family:var(--font-sans);font-size:15px;
     outline:none;-webkit-appearance:none;
+    box-shadow:none;
+    transition:border-color .25s,background .25s,box-shadow .25s;
   }
-  .search-bar-wrap .search-input::placeholder{color:rgba(242,230,208,.2)}
-  .search-bar-wrap .search-input:focus{border-color:rgba(242,230,208,.4)}
-  .search-clear{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:17px;color:rgba(242,230,208,.3);display:none;line-height:1;padding:2px 4px;background:none;border:none;cursor:pointer}
+  .search-bar-wrap .search-input::placeholder{color:rgba(242,230,208,.58)}
+  .search-bar-wrap .search-input:focus{
+    border-color:rgba(255,248,236,.85);background:rgba(242,230,208,.13);
+    box-shadow:none}
+  .search-clear{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:19px;color:rgba(242,230,208,.72);display:none;line-height:1;padding:2px 6px;background:none;border:none;cursor:pointer}
   .search-clear.show{display:block}
+  #sort-bar-wrap{
+    top:calc(44px + 50px);
+    padding:4px 14px 6px;
+    display:flex;align-items:center;justify-content:space-between;
+    border-bottom:1px solid rgba(242,230,208,.1);
+  }
   .sort-bar{display:flex;align-items:center;gap:6px;padding:0;border:none;background:none}
   .sort-label{font-family:var(--font-sans);font-size:9px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:rgba(242,230,208,.25)}
   .sort-select{border:none;border-bottom:1px solid rgba(242,230,208,.15);background:transparent;color:rgba(242,230,208,.6);font-family:var(--font-sans);font-size:11px;padding:2px 4px;outline:none;cursor:pointer;-webkit-appearance:none;appearance:none}
   .results-bar{display:inline-flex;align-items:center;margin:0}
   .results-count{font-family:var(--font-sans);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(242,230,208,.2)}
   .main-content{padding:4px 0 80px}
+  .lista-header{padding-left:calc(16px + env(safe-area-inset-left,0px));
+                padding-right:calc(16px + env(safe-area-inset-right,0px))}
+  /* le celle partivano dal bordo dello schermo: le lettere con sbalzo
+     (P, V, corsivi) sembravano tagliate. Si allineano al titolo di sezione. */
+  .lista-table th:first-child,.lista-table td:first-child{
+    padding-left:calc(16px + env(safe-area-inset-left,0px))}
+  .lista-table th:last-child,.lista-table td:last-child{
+    padding-right:calc(16px + env(safe-area-inset-right,0px))}
+  .lista-nome,.lista-prod,.lista-tipo{padding-right:6px}
 
   .mobile-list-view #wine-list{animation:listEnter .25s ease forwards}
   @keyframes listEnter{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
@@ -801,10 +787,10 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;color:inhe
 /* Titolo sezione: resta agganciato mentre si scorre */
 .sezione{margin-bottom:26px}
 .sezione-titolo{
-  position:sticky; top:0; z-index:5;
-  background:linear-gradient(#0A0806 78%, rgba(10,6,8,0));
+  position:sticky; top:var(--stick-top,0px); z-index:5;
+  background:linear-gradient(#0A0806 78%, rgba(10,8,6,0));
   padding:14px 16px 11px;
-  border-bottom:1px solid rgba(242,230,208,.18);
+  border-bottom:none;
 }
 
 .vino{
@@ -937,14 +923,33 @@ body{font-family:var(--font-sans);font-variant-numeric:tabular-nums}
 body i,body em,.w-vitigno,.w-prod,.w-geo,.vino-prod,.vino-vitigno,.vino-regione,
 .lista-prod,.lista-tipo,.modal-nome,#modal-note-text{font-style:normal}
 
-/* ── LOGO (bianco statico) ──────────────────────────────────────────────── */
-.pb-neon{position:relative;display:block}
-.pb-neon img{display:block;width:100%;height:auto}
+/* ── NEON ───────────────────────────────────────────────────────────────
+   Un solo nodo animato: .tube. Il filamento e l'alone sul muro sono suoi
+   pseudo-elementi, quindi non aggiungono nodi ne' animazioni: seguono
+   l'opacita' del tubo e sfarfallano con lui.
+   NOTA: NON esiste una regola prefers-reduced-motion che disattivi il
+   flicker. Uno sfarfallio di luminosita' non e' movimento, e disattivarlo
+   era il motivo per cui l'insegna sembrava accendersi di colpo. */
+.pb-neon{position:relative;display:block;
+  --m:url(assets/logo-neon.png) center/contain no-repeat}
+
+/* insegna spenta: il logo e' una silhouette bianca piena, senza alone */
+.pb-neon .tube{
+  position:relative;z-index:1;
+  display:block;width:100%;aspect-ratio:600/599;
+  -webkit-mask:var(--m);mask:var(--m);
+  background:var(--neon-white);
+  opacity:1;animation:none;filter:none;
+}
+.pb-neon .tube i{display:none}
+.pb-neon.lit .tube,.pb-neon.replay .tube,.pb-neon.dark .tube{opacity:1;animation:none}
+
+/* fallback se il PNG non carica */
 .pb-neon.pb-noimg::after{content:"Palinurobar";position:absolute;inset:0;
   display:flex;align-items:center;justify-content:center;text-align:center;
   font-family:var(--font-display);font-weight:700;font-size:clamp(20px,7vw,44px);
   letter-spacing:-.02em;color:var(--neon-white)}
-.pb-neon.pb-noimg img{visibility:hidden}
+.pb-neon.pb-noimg .tube{display:none}
 
 /* ── REVEAL lento ───────────────────────────────────────────────────────── */
 .pb-rv{opacity:0;transform:translateY(28px);filter:blur(9px);
@@ -982,7 +987,8 @@ body.view-landing .filter-fab,body.view-landing .pb-back{display:none!important}
 .pb-cta .sub{font-family:var(--font-sans);font-size:10px;font-weight:400;letter-spacing:.11em;text-transform:uppercase;color:rgba(242,230,208,.56);margin-top:5px;display:block;transition:color .5s}
 .pb-cta .arw{font-size:16px;color:rgba(242,230,208,.58);transition:transform .7s cubic-bezier(.16,1,.3,1),color .7s}
 .pb-cta:hover,.pb-cta.sel{
-  border-color:rgba(242,230,208,.34);background:rgba(242,230,208,.11);
+  border-color:rgba(255,248,236,.8);background:rgba(242,230,208,.12);
+  box-shadow:0 14px 46px rgba(242,230,208,.3);
   transform:translateY(-2px)}
 .pb-cta:hover .lbl,.pb-cta.sel .lbl{color:var(--neon-white);text-shadow:none}
 .pb-cta:hover .sub,.pb-cta.sel .sub{color:rgba(242,230,208,.6)}
@@ -990,6 +996,7 @@ body.view-landing .filter-fab,body.view-landing .pb-back{display:none!important}
 .pb-cta:active{transform:translateY(0);box-shadow:none}
 .pb-ctas{display:flex;flex-direction:column;gap:13px}
 .pb-foot .pb-meta{white-space:nowrap}
+@media(max-width:1023px){.pb-foot .pb-meta{display:block}}
 
 /* Landing — DESKTOP */
 @media(min-width:1024px){
@@ -999,17 +1006,18 @@ body.view-landing .filter-fab,body.view-landing .pb-back{display:none!important}
   .pb-g1{background-position:12% center;background-image:url(assets/bar-1000.jpg)}
   @media(min-width:1500px),(min-resolution:1.5dppx){.pb-g1{background-image:url(assets/bar-1600.jpg)}}
   .pb-gallery::after{content:"";position:absolute;inset:0;
-    background:linear-gradient(100deg,rgba(10,8,6,.38) 0%,rgba(10,8,6,.04) 42%,rgba(10,8,6,.9) 100%)}
+    background:
+      linear-gradient(90deg,transparent 46%,rgba(10,8,6,.35) 68%,rgba(10,8,6,.82) 88%,#0A0806 100%),
+      linear-gradient(100deg,rgba(10,8,6,.38) 0%,rgba(10,8,6,.04) 42%,rgba(10,8,6,.6) 100%)}
   .pb-gtop{left:52px;top:46px}
   .pb-panel{position:relative;background:#0A0806;z-index:5;
     display:flex;flex-direction:column;height:100%;overflow:hidden;
     padding:clamp(28px,5vh,54px) 74px clamp(22px,3.4vh,34px)}
-  .pb-panel::before{content:"";position:absolute;left:0;top:0;bottom:0;width:1px;
-    background:linear-gradient(180deg,transparent,rgba(242,230,208,.28),transparent)}
   /* blocco centrale elastico: si comprime prima di toccare il footer */
   .pb-core{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center}
-  .pb-neon{width:min(420px,44vh);margin:0 auto clamp(10px,2vh,20px)}
-  .pb-tagline{font-size:12.5px;text-align:center;margin-bottom:clamp(22px,6vh,58px)}
+  .pb-neon{width:min(530px,42vh);margin:0}
+  .pb-neon-row{margin:0 auto clamp(10px,2vh,20px)}
+  .pb-tagline{font-size:14px;text-align:center;margin-bottom:clamp(22px,6vh,58px)}
   .pb-ttl{font-size:clamp(30px,4.6vh,40px);text-align:center;margin-bottom:clamp(14px,2.6vh,24px)}
   .pb-ctas{gap:clamp(9px,1.4vh,13px)}
   .pb-cta{padding:clamp(14px,2vh,19px) 26px}
@@ -1019,32 +1027,43 @@ body.view-landing .filter-fab,body.view-landing .pb-back{display:none!important}
 }
 /* Landing — MOBILE */
 @media(max-width:1023px){
-  /* Due sole ombre: su mobile ogni ridisegno del filtro costa, e con sei
-     livelli il compositore non sta dietro ai passaggi da 20 ms del flicker. */
   .pb-gallery{display:none}
   .pb-landing{background:#0A0806}
   .pb-mob-bg{position:absolute;inset:0;background-size:cover;background-position:50% 42%;
     background-image:url(assets/cactus-620.jpg);
-    filter:saturate(.84) brightness(.5) contrast(1.04);animation:pbKb 34s ease-in-out infinite alternate}
+    filter:saturate(.88) brightness(.72) contrast(1.02);animation:pbKb 34s ease-in-out infinite alternate}
   @media(min-resolution:1.5dppx){.pb-mob-bg{background-image:url(assets/cactus-1200.jpg)}}
   .pb-landing::after{content:"";position:absolute;inset:0;z-index:1;
-    background:linear-gradient(180deg,rgba(10,8,6,.62) 0%,rgba(10,8,6,.22) 28%,rgba(10,8,6,.86) 66%,#0A0806 100%)}
-  .pb-panel{position:relative;z-index:5;display:flex;flex-direction:column;height:100%;padding:64px 22px 30px}
+    background:linear-gradient(180deg,rgba(10,8,6,.46) 0%,rgba(10,8,6,.10) 30%,rgba(10,8,6,.70) 68%,rgba(10,8,6,.96) 100%)}
+  .pb-panel{position:relative;z-index:5;display:flex;flex-direction:column;height:100%;
+    padding:64px 22px calc(30px + env(safe-area-inset-bottom,0px))}
   .pb-core{flex:1;min-height:0;display:flex;flex-direction:column}
-  .pb-gtop{left:22px;top:26px;right:22px;justify-content:space-between;gap:12px}
-  .pb-neon{width:min(206px,54vw);margin:24px auto 18px}
-  .pb-tagline{font-size:10px;text-align:center}
+  .pb-gtop{left:22px;top:26px;right:70px;justify-content:flex-start;flex-wrap:wrap;gap:4px 12px}
+  .pb-neon{width:min(268px,68vw);
+           width:min(268px,68vw,max(148px,calc(100vh - 420px)));margin:0}
+  @supports(height:100dvh){.pb-neon{width:min(268px,68vw);
+           width:min(268px,68vw,max(148px,calc(100dvh - 420px)))}}
+  .pb-neon-row{margin:auto auto 18px}
+  .pb-tagline{font-size:12px;text-align:center}
   .pb-block{margin-top:auto}
   .pb-ttl{font-size:34px;text-align:center;margin-bottom:20px}
   .pb-ctas{gap:10px}
   .pb-cta{border-radius:24px;padding:16px 20px}
   .pb-cta .lbl{font-size:18px}
-  .pb-foot{text-align:center;margin-top:18px;line-height:1.9}
+  .pb-foot{text-align:center;margin-top:18px;line-height:1.75}
+  body.view-landing #sb-status{opacity:.55}
 }
-@media(max-width:1023px) and (max-height:700px){
-  .pb-neon{width:150px;margin:8px auto 12px}
+@media(max-width:1023px) and (max-height:620px){
+  .pb-neon{width:min(232px,60vw);margin:0}
+  .pb-neon-row{margin:auto auto 12px}
   .pb-ttl{font-size:28px;margin-bottom:14px}
-  .pb-panel{padding-top:52px}
+  .pb-panel{padding-top:46px}
+}
+/* iPhone in verticale con le barre di Safari: ~640-700px di viewport.
+   Prima cadeva nel layout compatto e l'insegna si rimpiccioliva. */
+@media(max-width:1023px) and (min-height:621px) and (max-height:720px){
+  .pb-neon{width:min(250px,64vw)}
+  .pb-panel{padding-top:56px}
 }
 
 body.view-landing{overflow:hidden}
@@ -1052,6 +1071,8 @@ body.view-landing{overflow:hidden}
   body:not(.view-landing) .wine-col{padding-top:62px}
   body:not(.view-landing) .page-wrap{padding-top:4px}
 }
+
+.pb-neon-row{display:flex;align-items:center;justify-content:center}
 
 /* ── BACK ───────────────────────────────────────────────────────────────── */
 .pb-back{
@@ -1074,9 +1095,7 @@ body.view-landing{overflow:hidden}
 /* ── SIDEBAR DESKTOP ────────────────────────────────────────────────────── */
 @media(min-width:1024px){
   .sidebar-brand{padding:26px 20px 18px}
-  .pb-side-neon{width:150px;margin:0 auto 16px;display:block;cursor:pointer;
-    opacity:.92;transition:opacity .4s}
-  .pb-side-neon:hover{opacity:1}
+  .pb-side-neon{width:150px;margin:0 auto 16px;cursor:pointer}
   .sidebar-brand .brand-text-name{font-family:var(--font-display);font-weight:700;
     font-size:15px;letter-spacing:-.01em;text-transform:none;color:rgba(242,230,208,.7)}
   .brand-sep{margin-bottom:12px}
@@ -1091,8 +1110,32 @@ body.view-landing{overflow:hidden}
   .btn-view-sub{font-family:var(--font-sans);font-size:9px;font-weight:400;
     letter-spacing:.11em;text-transform:uppercase;color:rgba(242,230,208,.55);opacity:1;margin-top:4px}
   .btn-view:hover,.btn-view.active{
-    color:var(--neon-white);background:rgba(242,230,208,.12);border-color:rgba(242,230,208,.34)}
+    color:var(--neon-white);background:rgba(242,230,208,.12);border-color:rgba(255,248,236,.8);
+    box-shadow:0 10px 34px rgba(242,230,208,.25);
+    text-shadow:none}
   .btn-view:hover .btn-view-sub,.btn-view.active .btn-view-sub{color:rgba(242,230,208,.6)}
+}
+
+/* ── FONDO FOTOGRAFICO DELLE LISTE ───────────────────────────────────────
+   Fisso al viewport, non alla pagina: con 281 etichette una foto che scorre
+   col testo diventa un caleidoscopio. Ferma, si comporta come una parete.
+   La sfocatura non e' un vezzo: toglie le frequenze alte, che sono quelle
+   che rendono faticosa la lettura di un testo sovrapposto. */
+.pb-list-bg{position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:url(assets/interno-1000.jpg) center 45%/cover no-repeat;
+  filter:blur(2px) saturate(.9) brightness(.62)}
+@media(min-width:1500px),(min-resolution:1.5dppx){
+  .pb-list-bg{background-image:url(assets/interno-1600.jpg)}}
+body.view-landing .pb-list-bg{display:none}
+/* velo: pieno sotto la sidebar, poi sfuma. Nessuno stacco netto. */
+.pb-list-bg::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(10,8,6,.94) 0%,rgba(10,8,6,.8) 22%,rgba(10,8,6,.8) 100%)}
+@media(min-width:1024px){
+  .pb-list-bg::after{background:linear-gradient(90deg,
+    #0A0806 0%,#0A0806 20%,rgba(10,8,6,.86) 34%,rgba(10,8,6,.8) 46%,rgba(10,8,6,.8) 100%)}
+}
+@media(prefers-reduced-transparency:reduce){
+  .pb-list-bg{display:none}
 }
 
 /* ── VISTE ──────────────────────────────────────────────────────────────── */
@@ -1171,7 +1214,7 @@ body.view-cantina .sidebar-filters{max-height:100vh;opacity:1;pointer-events:aut
 .sb-filter-item{color:rgba(242,230,208,.62)}
 .results-count{color:rgba(242,230,208,.5)}
 .sort-label{color:rgba(242,230,208,.5)}
-.search-input::placeholder{color:rgba(242,230,208,.42)}
+.search-input::placeholder{color:rgba(242,230,208,.58)}
 .drawer-hdr span{color:rgba(242,230,208,.62)}
 #filter-drawer .cat-label{color:rgba(242,230,208,.72)}
 #filter-drawer .sb-filter-item{color:rgba(242,230,208,.66)}
@@ -1188,16 +1231,10 @@ body.view-cantina .sidebar-filters{max-height:100vh;opacity:1;pointer-events:aut
 @media(prefers-reduced-motion:reduce){
   .pb-rv{transition-duration:.01ms!important;transform:none!important;filter:none!important;opacity:1!important}
   .pb-g1,.pb-mob-bg{animation:none!important}
+  /* lo sfarfallio dell'insegna resta: e' luminosita', non movimento */
 }
 
 /* ── FASCE DI PREZZO (scorciatoia sopra la lista Cantina) ───────────────── */
-@media(max-width:1023px){
-  /* quattro voci su una riga sola, mai scroll orizzontale */
-  .pb-price-chips{flex-wrap:nowrap;gap:6px;padding:12px 14px 0}
-  .pb-price-chips .lbl{display:none}
-  .pb-chip{flex:1 1 0;min-width:0;padding:9px 4px;font-size:10px;letter-spacing:.06em;
-    text-align:center;white-space:nowrap}
-}
 .pb-price-chips{display:flex;gap:8px;flex-wrap:wrap;align-items:center;
   padding:14px 52px 0}
 .pb-price-chips .lbl{font-family:var(--font-sans);font-size:9px;font-weight:500;
@@ -1210,9 +1247,12 @@ body.view-cantina .sidebar-filters{max-height:100vh;opacity:1;pointer-events:aut
 .pb-chip:hover{border-color:rgba(255,248,236,.6);color:var(--neon-white)}
 .pb-chip[aria-pressed="true"]{border-color:rgba(255,248,236,.85);background:rgba(242,230,208,.16);color:var(--neon-white);
   box-shadow:none}
-@media(max-width:1023px){.pb-price-chips{padding:12px 16px 0;overflow-x:auto;flex-wrap:nowrap;
-  -webkit-overflow-scrolling:touch;scrollbar-width:none}
-  .pb-price-chips::-webkit-scrollbar{display:none}}
+@media(max-width:1023px){
+  /* quattro voci su una riga sola: niente scroll orizzontale */
+  .pb-price-chips{padding:12px 14px 0;flex-wrap:nowrap;gap:6px;overflow:visible}
+  .pb-price-chips .lbl{display:none}
+  .pb-chip{flex:1 1 0;min-width:0;padding:9px 4px;font-size:10px;letter-spacing:.06em;
+    text-align:center;white-space:nowrap}}
 
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -1321,6 +1361,11 @@ body.view-cantina .sidebar-filters{max-height:100vh;opacity:1;pointer-events:aut
 @media(prefers-reduced-motion:reduce){.pb-stagger{opacity:1;animation:none}}
 
 
+/* Al Calice: mai il prezzo della bottiglia, anche con carta.js in cache */
+body.view-calice .lista-bottiglia{display:none!important}
+body.view-calice .lista-table thead th:nth-child(4),
+body.view-calice .lista-table tbody td:nth-child(4){display:none!important}
+
 /* ── TITOLO SEZIONE AGGANCIATO IN ALTO ──────────────────────────────────── */
 /* I wrapper introdotti (#view-cantina in flex) non devono creare clipping:
    position:sticky smette di funzionare se un antenato ha overflow != visible. */
@@ -1328,18 +1373,20 @@ body.view-cantina .sidebar-filters{max-height:100vh;opacity:1;pointer-events:aut
   overflow:visible}
 .sezione{margin-bottom:26px;position:relative}
 .sezione-titolo{
-  position:sticky;top:0;z-index:30;
-  background:#0A0806;
-  padding:14px 18px 11px;
-  border-bottom:1px solid rgba(242,230,208,.22);
-  box-shadow:0 6px 18px -10px rgba(0,0,0,.9)}
+  position:sticky;top:var(--stick-top,0px);z-index:30;
+  /* dissolvenza, non banda: il fondo sfuma e non taglia la foto */
+  background:linear-gradient(180deg,rgba(10,8,6,.92) 0%,rgba(10,8,6,.82) 62%,rgba(10,8,6,0) 100%);
+  -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+  padding:14px 18px 14px;
+  border-bottom:none;
+  box-shadow:none}
 @media(min-width:1024px){
   .sezione-titolo{padding:16px 22px 12px;font-size:13px}
 }
 /* il titolo agganciato non deve essere coperto dalla barra di ricerca mobile,
    che nel foglio base e' sticky a z-index 40 */
 @media(max-width:1023px){
-  .sezione-titolo{top:0;padding:12px 16px 10px}
+  .sezione-titolo{top:var(--stick-top,0px);padding:16px 16px 10px;font-size:15.5px}
 }
 
 </style>
@@ -1358,8 +1405,10 @@ body.view-cantina .sidebar-filters{max-height:100vh;opacity:1;pointer-events:aut
 
   <div class="pb-panel">
    <div class="pb-core">
-    <div class="pb-neon pb-rv d1" id="pb-neon">
-      <img src="assets/logo-neon.png" alt="Palinurobar" width="600" height="599" decoding="async">
+    <div class="pb-neon-row">
+      <div class="pb-neon" id="pb-neon" role="img" aria-label="Palinurobar">
+        <span class="tube"><i class="core"></i><i class="hot"></i></span>
+      </div>
     </div>
     <div class="pb-tagline pb-rv d2">Your Favourite Whistling Bar</div>
 
@@ -1388,10 +1437,15 @@ body.view-cantina .sidebar-filters{max-height:100vh;opacity:1;pointer-events:aut
 
 <button class="pb-back" id="pb-back" type="button" onclick="backToLanding()" aria-label="Torna alla pagina principale"><span class="pb-back-ico">&larr;</span> Home</button>
 
+<div class="pb-list-bg" aria-hidden="true"></div>
+
 <!-- ══════════════════ SIDEBAR DESKTOP ══════════════════ -->
 <div class="sidebar-col">
   <div class="sidebar-brand">
-    <img class="pb-side-neon" src="assets/logo-neon.png" alt="Palinurobar" width="150" height="150" onclick="backToLanding()" title="Torna alla home">
+    <div class="pb-neon lit pb-side-neon" role="button" tabindex="0" aria-label="Palinurobar — torna alla home"
+         title="Torna alla home" onclick="backToLanding()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();backToLanding()}">
+      <span class="tube"><i class="core"></i><i class="hot"></i></span>
+    </div>
     <div class="brand-sep"></div>
     <div class="brand-text-name">Carta dei Vini</div>
   </div>
@@ -1502,13 +1556,11 @@ body.view-cantina .sidebar-filters{max-height:100vh;opacity:1;pointer-events:aut
   var neon    = document.getElementById("pb-neon");
   var _t1 = null;
 
-  /* fallback se il PNG del logo non arriva */
+  /* il logo e' statico: resta solo il fallback se il PNG non arriva */
   if(neon){
-    var _lg = neon.querySelector("img");
-    if(_lg){
-      if(_lg.complete){ if(_lg.naturalWidth === 0) neon.classList.add("pb-noimg"); }
-      else _lg.addEventListener("error", function(){ neon.classList.add("pb-noimg"); });
-    }
+    var _probe = new Image();
+    _probe.onerror = function(){ neon.classList.add("pb-noimg"); };
+    _probe.src = "assets/logo-neon.png";
   }
 
   function runIntro(){
@@ -1571,6 +1623,32 @@ body.view-cantina .sidebar-filters{max-height:100vh;opacity:1;pointer-events:aut
     }
   }, 40);
 
+  /* ── offset dei titoli agganciati ─────────────────────────────────
+     Sopra la lista ci sono fino a tre barre (back fissa, ricerca, sort) che
+     cambiano altezza tra viewport, orientamento e stato. Con top:0 il titolo
+     di sezione si fermava sotto di loro e i testi si accavallavano.
+     Si misura il bordo inferiore reale invece di stimarlo. */
+  var STICK_SEL = [".btn-back-mobile",".search-bar-wrap","#sort-bar-wrap",".main-content>.results-bar"];
+  function measureStick(){
+    var top = 0;
+    STICK_SEL.forEach(function(sel){
+      var el = document.querySelector(sel);
+      if(!el) return;
+      var cs = getComputedStyle(el);
+      if(cs.display === "none" || cs.visibility === "hidden") return;
+      if(cs.position !== "sticky" && cs.position !== "fixed") return;
+      var h = el.getBoundingClientRect().height;
+      if(!h) return;
+      top = Math.max(top, (parseFloat(cs.top) || 0) + h);
+    });
+    document.documentElement.style.setProperty("--stick-top", Math.round(top) + "px");
+  }
+  window.pbMeasureStick = measureStick;
+  addEventListener("resize", measureStick, {passive:true});
+  addEventListener("orientationchange", function(){ setTimeout(measureStick, 180); });
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(measureStick);
+  measureStick();
+
   /* ── entrata a cascata delle righe ────────────────────────────────
      Osserva le liste renderizzate da carta.js: nessuna modifica al suo codice.
      Anima solo le prime righe, il resto compare subito (283 etichette). */
@@ -1578,7 +1656,7 @@ body.view-cantina .sidebar-filters{max-height:100vh;opacity:1;pointer-events:aut
   if(!reduce){
     var MAX = 22, STEP = 26;
     function stagger(root){
-      var rows = root.querySelectorAll(".vino, .lista-row, .sezione-titolo");
+      var rows = root.querySelectorAll(".vino, .lista-row");
       for(var i=0;i<rows.length && i<MAX;i++){
         rows[i].classList.remove("pb-stagger");
         void rows[i].offsetWidth;
@@ -1588,7 +1666,7 @@ body.view-cantina .sidebar-filters{max-height:100vh;opacity:1;pointer-events:aut
     }
     var mo = new MutationObserver(function(muts){
       for(var i=0;i<muts.length;i++){
-        if(muts[i].addedNodes.length){ stagger(muts[i].target); break; }
+        if(muts[i].addedNodes.length){ stagger(muts[i].target); measureStick(); break; }
       }
     });
     ["wine-list","calice-list","mescita-list"].forEach(function(id){
@@ -1610,6 +1688,6 @@ body.view-cantina .sidebar-filters{max-height:100vh;opacity:1;pointer-events:aut
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="carta.js"></script>
+<script src="carta.js?v=7"></script>
 </body>
 </html>
