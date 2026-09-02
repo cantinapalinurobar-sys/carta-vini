@@ -513,7 +513,7 @@ function buildSidebar(){
   // ── Ordina (assorbe la vecchia sort-bar: stessa select, altra interfaccia)
   var _sortSel = document.getElementById("sort-sel");
   var curSort  = _sortSel ? _sortSel.value : "default";
-  html+="<div class=\"sb-acc-wrap open\" id=\"wrap-acc-sort\">"
+  html+="<div class=\"sb-acc-wrap"+(curSort!=="default"?" open":"")+"\" id=\"wrap-acc-sort\">"
     +"<div class=\"sb-acc-head\" onclick=\"_toggleAcc(this)\">"
     +"<span class=\"sb-acc-title\">Ordina</span>"
     +"<span class=\"sb-acc-arrow\">\u25bc</span></div>"
