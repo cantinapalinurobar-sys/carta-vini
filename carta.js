@@ -315,8 +315,6 @@ function setView(view){
   currentView = view;
   window.scrollTo(0,0);
   document.body.className = "view-" + view;
-  /* cambiando vista cambiano le barre in alto: l'offset dei titoli va rifatto */
-  if(window.pbMeasureStick) requestAnimationFrame(window.pbMeasureStick);
   var allViews = ["view-landing","view-calice","view-mescita","view-cantina"];
   allViews.forEach(function(id){
     var el = document.getElementById(id);
@@ -350,45 +348,28 @@ function _renderListaVini(viewKey, wines, showCalice){
   var container = document.getElementById(containerId);
   if(!container) return;
   if(!wines.length){ container.innerHTML="<div class=\"vuoto\">Nessun vino disponibile.</div>"; return; }
-
-  var soloCalice = viewKey === "calice";
-
-  /* raggruppa per tipologia nell'ordine della carta, come in Cantina.
-     Le tipologie fuori CAT_ORDER finiscono in coda, in ordine alfabetico. */
-  var gruppi = {};
-  wines.forEach(function(w){
-    var k = w.tipologia || "Altro";
-    (gruppi[k] || (gruppi[k] = [])).push(w);
+  var sorted = wines.slice().sort(function(a,b){ return (a.n||"").localeCompare(b.n||"","it"); });
+  var html = "<table class=\"lista-table\"><thead><tr>"
+    +"<th>Vino</th><th>Tipologia</th>"
+    +(showCalice ? "<th class=\"col-price\">Al Calice</th>" : "")
+    +"<th class=\"col-price\">Bottiglia</th>"
+    +"</tr></thead><tbody>";
+  sorted.forEach(function(w){
+    var nomeHtml = esc(w.n)+(w.annata ? " <span class=\"lista-annata\">"+esc(w.annata)+"</span>" : "");
+    var prodHtml = w.produttore ? "<div class=\"lista-prod\">"+esc(w.produttore)+"</div>" : "";
+    var tipologia = w.tipologia ? (CAT_LABELS[w.tipologia]||w.tipologia) : "—";
+    html += "<tr class=\"lista-row\" data-id=\""+w.id+"\">"
+      +"<td><span class=\"lista-nome\">"+nomeHtml+"</span>"+prodHtml+"</td>"
+      +"<td><span class=\"lista-tipo\">"+esc(tipologia)+"</span></td>"
+      +(showCalice ? "<td class=\"col-price lista-calice\">"+(w.b||"—")+"</td>" : "")
+      +"<td class=\"col-price lista-bottiglia\">"+(w.p||"—")+"</td>"
+      +"</tr>";
   });
-  var chiavi = CAT_ORDER.filter(function(k){ return gruppi[k]; })
-    .concat(Object.keys(gruppi).filter(function(k){ return CAT_ORDER.indexOf(k) === -1; }).sort());
-
-  var html = "";
-  chiavi.forEach(function(cat){
-    var sorted = gruppi[cat].slice().sort(function(a,b){ return (a.n||"").localeCompare(b.n||"","it"); });
-    html += "<div class=\"sezione\"><div class=\"sezione-titolo\">"+esc(CAT_LABELS[cat]||cat)+"</div>"
-      +"<table class=\"lista-table\"><thead><tr>"
-      +"<th>Vino</th>"
-      +(showCalice ? "<th class=\"col-price\">Al Calice</th>" : "")
-      +(soloCalice ? "" : "<th class=\"col-price\">Bottiglia</th>")
-      +"</tr></thead><tbody>";
-    sorted.forEach(function(w){
-      var nomeHtml = esc(w.n)+(w.annata ? " <span class=\"lista-annata\">"+esc(w.annata)+"</span>" : "");
-      var prodHtml = w.produttore ? "<div class=\"lista-prod\">"+esc(w.produttore)+"</div>" : "";
-      html += "<tr class=\"lista-row\" data-id=\""+w.id+"\">"
-        +"<td><span class=\"lista-nome\">"+nomeHtml+"</span>"+prodHtml+"</td>"
-        +(showCalice ? "<td class=\"col-price lista-calice\">"+(w.b||"—")+"</td>" : "")
-        +(soloCalice ? "" : "<td class=\"col-price lista-bottiglia\">"+(w.p||"—")+"</td>")
-        +"</tr>";
-    });
-    html += "</tbody></table></div>";
-  });
-
+  html += "</tbody></table>";
   container.innerHTML = html;
   container.querySelectorAll(".lista-row[data-id]").forEach(function(el){
     el.addEventListener("click", function(){ openModal(el.getAttribute("data-id")); });
   });
-  if(window.pbMeasureStick) window.pbMeasureStick();
 }
 
 var _initDone = false;
@@ -483,7 +464,6 @@ function applyFilters(){
   document.querySelectorAll(".vino[data-id]").forEach(function(el){
     el.addEventListener("click",function(){ openModal(el.getAttribute("data-id")); });
   });
-  if(window.pbMeasureStick) window.pbMeasureStick();
 }
 
 function _buildWineRow(w,cat){
@@ -530,6 +510,20 @@ function _buildWineRow(w,cat){
 
 function buildSidebar(){
   var html="";
+  // ── Ordina (assorbe la vecchia sort-bar: stessa select, altra interfaccia)
+  var _sortSel = document.getElementById("sort-sel");
+  var curSort  = _sortSel ? _sortSel.value : "default";
+  html+="<div class=\"sb-acc-wrap open\" id=\"wrap-acc-sort\">"
+    +"<div class=\"sb-acc-head\" onclick=\"_toggleAcc(this)\">"
+    +"<span class=\"sb-acc-title\">Ordina</span>"
+    +"<span class=\"sb-acc-arrow\">\u25bc</span></div>"
+    +"<div class=\"sb-acc-body\" id=\"acc-sort\"><ul class=\"sb-filter-list\">";
+  [["default","Consigliati"],["asc","Prezzo crescente"],["desc","Prezzo decrescente"],
+   ["az","Nome A \u2192 Z"],["za","Nome Z \u2192 A"]].forEach(function(o){
+    html+="<li class=\"sb-filter-item"+(curSort===o[0]?" active":"")+"\" "
+      +"onclick=\"setSort('"+o[0]+"')\">"+o[1]+"</li>";
+  });
+  html+="</ul></div></div>";
   // ── Sezione Categorie come accordion
   var catOpen = (fCat !== "tutti");
   html+="<div class=\"sb-acc-wrap"+(catOpen?" open":"")+"\" id=\"wrap-acc-cat\">"
@@ -607,6 +601,14 @@ function buildSidebar(){
 function _toggleAcc(headEl){
   var wrap = headEl.parentElement;
   if(wrap) wrap.classList.toggle("open");
+}
+
+function setSort(v){
+  var sel = document.getElementById("sort-sel");
+  if(!sel) return;
+  sel.value = v;
+  applyFilters();
+  buildSidebar();
 }
 
 function buildSortBar(){
@@ -697,8 +699,7 @@ function openModal(id){
   if(annataEl) annataEl.textContent = w.annata?"Annata "+w.annata:"";
 
   var p="";
-  var _soloCalice = document.body.classList.contains("view-calice");
-  if(w.p && !_soloCalice) p+="<div class=\"modal-p-item\"><div class=\"modal-p-lbl\">Bottiglia</div><div class=\"modal-p-val\">"+esc(w.p)+"</div></div>";
+  if(w.p) p+="<div class=\"modal-p-item\"><div class=\"modal-p-lbl\">Bottiglia</div><div class=\"modal-p-val\">"+esc(w.p)+"</div></div>";
   if(w.b) p+="<div class=\"modal-p-item\"><div class=\"modal-p-lbl\">Al calice</div><div class=\"modal-p-val\">"+esc(w.b)+"</div></div>";
   if(prezzoEl) prezzoEl.innerHTML = p;
 
