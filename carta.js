@@ -201,6 +201,14 @@ function getCategoryByTipologia(t){
 
 // ── FORMATTAZIONE PREZZO ─────────────────────────────────────────────────────
 function _fmtP(v){ var s=parseFloat(v).toFixed(2); return s.replace(/\.00$/,"").replace(/(\.\d)0$/,"$1"); }
+// Servizio al banco: 6 € per bottiglia stappata, incluso nel prezzo in carta
+// (allineato a CONFIG.servizioBottiglia del manager). Non tocca il calice.
+var SERVIZIO_BOTTIGLIA = 6;
+function _pBott(w){
+  var raw = w.prezzoCarta || "";
+  var n = raw ? parseFloat(String(raw).replace(/[^0-9.,]/g,"").replace(",",".")) || 0 : 0;
+  return n > 0 ? n + SERVIZIO_BOTTIGLIA : 0;
+}
 
 async function loadWines(){
   var wines = await _fetchWinesRaw();
@@ -213,8 +221,7 @@ async function loadWines(){
     var cat = fmt > 0.75 ? "Magnum" : getCategoryByTipologia(rawTipo);
     if(!d[cat]) d[cat] = [];
     var nome = w.nome || w.nomeVino || w.n || "";
-    var pCarta = w.prezzoCarta || "";
-    var pNum = pCarta ? parseFloat(String(pCarta).replace(/[^0-9.,]/g,"").replace(",",".")) || 0 : 0;
+    var pNum = _pBott(w);
     var _paese = inferPaese(w.nazione, w.regione, w.zona);
     d[cat].push({
       id: w.id,
@@ -241,8 +248,7 @@ async function loadWines(){
   d["Calice"] = [];
   d["MescitaUnder45"] = [];
   wines.forEach(function(w){
-    var pCarta = w.prezzoCarta || "";
-    var pNum = pCarta ? parseFloat(String(pCarta).replace(/[^0-9.,]/g,"").replace(",",".")) || 0 : 0;
+    var pNum = _pBott(w);
     var pCalice = parseFloat(w.prezzoCalice||w.prezzoAlCalice||0) || 0;
     var found = null;
     CAT_ORDER.forEach(function(t){
